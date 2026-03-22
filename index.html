@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大潟ショッピングセンター</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    
+    <!-- ハンバーガーメニュー -->
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    
+    <!-- ナビゲーション -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <span class="logo-symbol">◆</span>
+                <span class="logo-text">OHGATASC</span>
+            </div>
+            <h1 class="logo">大潟ショッピングセンター</h1>
+            
+            <!-- メインナビ -->
+            <div class="main-nav">
+                <button class="nav-button" data-page="home">ホーム</button>
+                <button class="nav-button" data-page="shops">店舗</button>
+                <button class="nav-button" data-page="events">イベント</button>
+                <button class="nav-button" data-page="map">地図</button>
+            </div>
+            
+            <!-- ハンバーガーメニュー -->
+            <label for="menu-toggle" class="menu-button">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+        </div>
+    </nav>
+    
+    <!-- スライドメニュー -->
+    <div class="slide-menu">
+        <div class="slide-menu-content">
+            <button class="slide-nav-button" data-page="home">ホーム</button>
+            <button class="slide-nav-button" data-page="shops">店舗</button>
+            <button class="slide-nav-button" data-page="events">イベント</button>
+            <button class="slide-nav-button" data-page="map">地図</button>
+        </div>
+    </div>
+    
+    <!-- パンくずリスト -->
+    <div class="breadcrumb">
+        <nav class="breadcrumb-nav" id="breadcrumb">
+            <a href="#" class="breadcrumb-item" data-page="home">ホーム</a>
+        </nav>
+    </div>
+    
+    <!-- メインコンテンツ -->
+    <main class="container-main">
+        <section id="main-content" class="content">
+            <!-- ここに動的コンテンツが読み込まれる -->
+        </section>
+    </main>
+    
+    <!-- フッター -->
+    <footer class="footer">
+        <p>&copy; 2026 Shop Info. All rights reserved.</p>
+    </footer>
+    
+    <script src="js/app.js"></script>
+</body>
+</html>

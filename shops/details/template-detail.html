@@ -1,0 +1,52 @@
+<!-- 
+    詳細ページテンプレート
+    
+    このテンプレートは /shops/details/ ディレクトリ内で、
+    各店舗の詳細ページHTMLを作成する際の雛形として使用してください。
+    
+    使用方法：
+    1. このファイルをコピーして店舗名に変更（例：shop-c-detail.html）
+    2. 以下の値を修正：
+       - 店舗名
+       - 詳細説明
+       - 住所
+       - 電話
+       - 営業時間
+       - ギャラリー画像
+    3. app.js の shopsData の detailDescription を更新
+-->
+
+<div class="shop-detail">
+    <div class="detail-header">
+        <div class="detail-image">🏪</div>
+        <h2>店舗名</h2>
+        <div class="detail-meta">
+            <div class="detail-meta-item">
+                <div class="detail-meta-label">住所</div>
+                <div class="detail-meta-value">都道府県市区町村 番地番号</div>
+            </div>
+            <div class="detail-meta-item">
+                <div class="detail-meta-label">電話</div>
+                <div class="detail-meta-value">03-xxxx-xxxx</div>
+            </div>
+            <div class="detail-meta-item">
+                <div class="detail-meta-label">営業時間</div>
+                <div class="detail-meta-value">11:00-22:00</div>
+            </div>
+        </div>
+    </div>
+    <div class="detail-content">
+        <p>
+            ここに詳細な説明を記入してください。
+            店舗の特徴、こだわり、背景などを記載します。
+        </p>
+        <h3>ギャラリー</h3>
+        <div class="gallery">
+            <div class="gallery-item">写真1</div>
+            <div class="gallery-item">写真2</div>
+            <div class="gallery-item">写真3</div>
+            <div class="gallery-item">写真4</div>
+        </div>
+    </div>
+    <button class="back-button" onclick="app.goBack()">戻る</button>
+</div>

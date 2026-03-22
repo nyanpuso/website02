@@ -1,0 +1,53 @@
+<!-- 
+    サンプル店舗 A 詳細ページ
+    
+    このファイルは参考用として存在し、
+    実際の描画は app.js の shopsData.detailDescription から行われます。
+    
+    参考：
+    - ID: shop-a
+    - 名称: サンプル店舗 A
+    - タイプ: カフェ
+-->
+
+<div class="shop-detail">
+    <div class="detail-header">
+        <div class="detail-image">☕</div>
+        <h2>サンプル店舗 A</h2>
+        <div class="detail-meta">
+            <div class="detail-meta-item">
+                <div class="detail-meta-label">住所</div>
+                <div class="detail-meta-value">東京都渋谷区道玄坂 1-2-3</div>
+            </div>
+            <div class="detail-meta-item">
+                <div class="detail-meta-label">電話</div>
+                <div class="detail-meta-value">03-xxxx-xxxx</div>
+            </div>
+            <div class="detail-meta-item">
+                <div class="detail-meta-label">営業時間</div>
+                <div class="detail-meta-value">平日 9:00-22:00 / 土日祝 8:00-23:00</div>
+            </div>
+        </div>
+    </div>
+    <div class="detail-content">
+        <p>
+            私たちのカフェは、お客様が心からリラックスできる場所を目指して営業しています。
+            すべてのコーヒー豆は、海外の厳選された農園から直接仕入れており、
+            毎日新鮮な状態で提供させていただいております。
+        </p>
+        <h3>こだわり</h3>
+        <p>
+            使用する水にもこだわり、専門の浄水システムを導入しています。
+            また、季節ごとに限定メニューも提供しており、
+            リピーターの皆様にも新たな味わいを楽しんでいただけます。
+        </p>
+        <h3>ギャラリー</h3>
+        <div class="gallery">
+            <div class="gallery-item">店内風景1</div>
+            <div class="gallery-item">店内風景2</div>
+            <div class="gallery-item">コーヒー</div>
+            <div class="gallery-item">スイーツ</div>
+        </div>
+    </div>
+    <button class="back-button" onclick="app.goBack()">戻る</button>
+</div>

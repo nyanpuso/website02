@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大潟ショッピングセンター - Dramatic Entrance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* --- 1. 基本スタイルと視認性調整 --- */
+        body, html {
+            margin: 0; padding: 0;
+            overflow: hidden; /* アニメーション中はスクロールさせない */
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f0f0; /* 全体の背景 */
+        }
+
+        /* エントランスレイヤー（全画面を白で覆う） */
+        #entrance-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100vh;
+            background: #fff;
+            z-index: 1000;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        #entrance-svg {
+            width: 100%; height: 100%;
+            max-width: 1200px;
+            cursor: pointer;
+        }
+
+        /* 移動する文字が見えなくならないよう、overflowをvisibleに（重要！） */
+        #entrance-overlay, .navbar, .navbar-container {
+            overflow: visible !important;
+        }
+
+        /* --- 2. ナビゲーションバー（着地点）の調整 --- */
+        .navbar {
+            position: fixed;
+            top: 0; width: 100%;
+            background: #1a1a1a; /* 非常に暗い背景 */
+            color: #fff;
+            padding: 15px 0;
+            z-index: 100;
+            opacity: 0; /* 最初は隠す */
+            visibility: hidden;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.6);
+        }
+
+        .navbar-container {
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 20px; }
+
+        /* 文字着地点のスタイル */
+        .logo-wrap, .fly-in-target {
+            color: #e74c3c; /* 到着時も赤を維持 */
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        /* タイトルの入れ替え構造 */
+        .logo-title-container {
+            position: relative; display: inline-flex; align-items: center;
+            min-width: 200px; height: 1.2rem; margin: 0; font-size: 1rem;
+        }
+
+        .fly-in-target {
+            color: #e74c3c;
+            white-space: nowrap;
+        }
+
+        .final-title {
+            color: #ffffff; /* 最終的な文字色 */
+            white-space: nowrap;
+        }
+
+        /* --- 3. メインコンテンツ（トップページ） --- */
+        .container {
+            margin-top: 100px;
+            padding: 40px;
+            text-align: center;
+            opacity: 0; /* 最初は隠す */
+            visibility: hidden;
+            background: #fff;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+
+<div id="entrance-overlay">
+    <svg id="entrance-svg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid slice">
+        <defs>
+            <filter id="soft-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="40" result="blur" />
+            </mask>
+            
+            <mask id="soft-building-mask">
+                <rect x="0" y="0" width="1000" height="500" fill="white" />
+                <circle id="mask-circle" cx="500" cy="350" r="0" fill="black" filter="url(#soft-glow)" />
+            </mask>
+        </defs>
+
+        <g id="building-group" mask="url(#soft-building-mask)">
+            <rect x="100" y="150" width="800" height="250" fill="#ddd" rx="5" />
+            <rect x="420" y="300" width="160" height="100" fill="#bbb" />
+        </g>
+
+        <circle id="light-effect" cx="500" cy="350" r="0" fill="#fff" filter="url(#soft-glow)" />
+
+        <g id="moving-elements">
+            <g data-flip-id="logo-transition">
+                <text x="500" y="230" font-size="60" font-weight="bold" fill="#e74c3c" text-anchor="middle">OHGATASC</text>
+            </g>
+            <g data-flip-id="title-transition">
+                <text x="500" y="280" font-size="20" font-weight="bold" fill="#e74c3c" text-anchor="middle">オオガタショッピングセンター</text>
+            </g>
+        </g>
+    </svg>
+</div>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo-area">
+                <div class="logo-wrap" data-flip-id="logo-transition">
+                    <span class="logo-symbol">◆</span>
+                    <span class="logo-text">OHGATASC</span>
+                </div>
+                <h1 class="logo-title-container">
+                    <span class="fly-in-target" data-flip-id="title-transition" style="position: absolute; opacity: 1;">
+                        オオガタショッピングセンター
+                    </span>
+                    <span class="final-title" style="opacity: 0;">大潟ショッピングセンター</span>
+                </h1>
+            </div>
+            <div class="menu-dummy">MENU</div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h2>大潟ショッピングセンターへようこそ！</h2>
+        <p>Dramatic Entrance Animation SUCCESS</p>
+        <p>（ここにトップページのコンテンツが入ります）</p>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Flip.min.js"></script>
+
+<script>
+    gsap.registerPlugin(Flip);
+
+    const svg = document.getElementById('entrance-svg');
+    const lightCircle = document.getElementById('light-effect');
+    const maskCircle = document.getElementById('mask-circle');
+    const movingGroup = document.getElementById('moving-elements');
+
+    svg.addEventListener('click', () => {
+        const state = Flip.getState("[data-flip-id]");
+        const tl = gsap.timeline();
+
+        // --- 1. 光の広がりと建物の「ソフトな消失」を完全同期 ---
+        tl.to([lightCircle, maskCircle], {
+            attr: { r: 1500 }, // ぼかしの分、さらに大きく
+            duration: 1.6,     // 少しゆっくりにして幻想的に
+            ease: "circ.in",  // じわじわ広がって最後加速
+            onStart: () => {
+                // ドア部分を一瞬強く光らせる演出
+                gsap.from("#light-effect", { opacity: 0.5, duration: 0.2 });
+            }
+        });
+
+        // --- 2. ロゴを光の中でフワッと拡大・浮遊させる (溜め) ---
+        tl.to(movingGroup, {
+            y: -50,
+            scale: 1.2,
+            duration: 0.9,
+            ease: "expo.out",
+            startAt: { y: 0, scale: 1 },
+            opacity: 1
+        }, "-=0.6"); // 光が広がりきる少し前から開始
+
+        // --- 3. ナビバーへのジャンプ ---
+        tl.add(() => {
+            // 背景の準備
+            document.querySelector('.navbar').style.opacity = "1";
+            document.querySelector('.navbar').style.visibility = "visible";
+
+            Flip.from(state, {
+                duration: 1.8,
+                ease: "expo.inOut",
+                stagger: 0.12,
+                absolute: true,
+                onComplete: () => {
+                    // 到着後の漢字へのクロスフェード
+                    const flyIn = document.querySelector('.fly-in-target');
+                    const final = document.querySelector('.final-title');
+                    gsap.to(flyIn, { opacity: 0, y: -10, duration: 0.4 });
+                    gsap.to(final, { opacity: 1, y: 0, startAt: { y: 10 }, duration: 0.6 });
+                    
+                    // エントランスを消して終了
+                    gsap.to("#entrance-overlay", { opacity: 0, display: "none", duration: 0.5 });
+                }
+            });
+        }, "+=0.3"); // 浮遊した一瞬の「溜め」の後に飛ばす
+    });
+</script>
+</body>
+</html>

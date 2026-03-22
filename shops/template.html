@@ -1,0 +1,28 @@
+<!-- 
+    店舗テンプレート
+    
+    このテンプレートは /shops/ ディレクトリ内で、
+    各店舗のHTMLを作成する際の雛形として使用してください。
+    
+    使用方法：
+    1. このファイルをコピーして店舗名に変更（例：shop-c.html）
+    2. 以下の値を修正：
+       - data-shop-id: 店舗の一意なID
+       - 店舗名
+       - 説明テキスト
+       - その他のメタ情報
+    3. app.js の shopsData に対応するデータを追加
+-->
+
+<div class="shop-card">
+    <div class="shop-card-image">🏪</div>
+    <div class="shop-card-content">
+        <h3>店舗名</h3>
+        <p>ここに簡潔な説明を記入。店舗の特徴や雰囲気を短く表現します。</p>
+        <div class="shop-card-footer">
+            <button class="shop-button" onclick="app.goToShopDetail('shop-id')">
+                詳細を見る
+            </button>
+        </div>
+    </div>
+</div>
