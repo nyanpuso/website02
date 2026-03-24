@@ -1,8 +1,7 @@
 /* ==========================================
    リセット・基本スタイル
    ========================================== */
-
-* {
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -18,32 +17,31 @@
     --color-accent: #0066cc;
     --color-overlay: rgba(0, 0, 0, 0.5);
     
-    /* 余白 */
-    --spacing-xs: 0.5rem;
-    --spacing-sm: 1rem;
-    --spacing-md: 1.5rem;
-    --spacing-lg: 2rem;
-    --spacing-xl: 3rem;
+    /* 余白 (画面サイズに応じて可変) */
+    --spacing-xs: clamp(0.25rem, 0.5vw, 0.5rem);
+    --spacing-sm: clamp(0.5rem, 1vw, 1rem);
+    --spacing-md: clamp(1rem, 2vw, 1.5rem);
+    --spacing-lg: clamp(1.5rem, 3vw, 2rem);
+    --spacing-xl: clamp(2rem, 5vw, 3rem);
     
     /* サイズ */
-    --nav-height: 60px;
+    --nav-height: clamp(60px, 8vh, 80px);
     --max-width: 1200px;
     
-    /* フォント */
+    /* フォントサイズ (clampを使用して流動的に) */
     --ff-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --ff-serif: "Georgia", "Yu Mincho", serif;
-    --font-size-base: 16px;
-    --font-size-sm: 14px;
-    --font-size-lg: 18px;
-    --font-size-xl: 24px;
-    --font-size-2xl: 32px;
+    --font-size-sm: clamp(0.8rem, 1vw, 0.875rem);
+    --font-size-base: clamp(1rem, 1.2vw, 1.125rem);
+    --font-size-lg: clamp(1.125rem, 1.5vw, 1.25rem);
+    --font-size-xl: clamp(1.5rem, 2vw, 1.75rem);
+    --font-size-2xl: clamp(1.75rem, 3vw, 2.5rem);
     
     /* トランジション */
     --transition: all 0.3s ease;
 }
 
 html {
-    font-size: var(--font-size-base);
+    font-size: 16px; /* ベースは16px基準 */
     scroll-behavior: smooth;
 }
 
@@ -53,12 +51,14 @@ body {
     background-color: var(--color-bg);
     line-height: 1.6;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 /* ==========================================
    ナビゲーション
    ========================================== */
-
 .navbar {
     position: sticky;
     top: 0;
@@ -71,39 +71,43 @@ body {
 
 .navbar-container {
     max-width: var(--max-width);
-    height: var(--nav-height);
-    align-items: center;
+    height: 100%;
     margin: 0 auto;
     padding: 0 var(--spacing-lg);
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-md); /* HTML構造に合わせて余白を制御 */
 }
-
 
 .logo {
-    height: 100%;
-}
-
-.logo-text {
-    font-size: var(--font-size-xl);
-    font-weight: 700;
+    height: 60%; /* ナビゲーションの高さに対する割合 */
+    min-height: 30px;
+    display: flex;
+    align-items: center;
 }
 
 .logo-symbol {
+    height: 100%;
     display: flex;
     align-items: center;
-    height: 100%;  /* ←追加 */
 }
 
 .logo-symbol img {
-    max-height: 100%;  /* ←変更（ここ重要） */
+    height: 100%;
     width: auto;
     object-fit: contain;
+}
+
+.logo-text {
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    white-space: nowrap;
+    font-weight: 600;
 }
 
 .main-nav {
     display: flex;
     gap: var(--spacing-lg);
+    margin-left: auto; /* 右寄せにする */
 }
 
 .nav-button {
@@ -114,14 +118,11 @@ body {
     cursor: pointer;
     padding: var(--spacing-xs);
     position: relative;
-    transition: color var(--transition);
     font-weight: 500;
+    transition: color var(--transition);
 }
 
-.nav-button:hover {
-    color: var(--color-accent);
-}
-
+.nav-button:hover,
 .nav-button.active {
     color: var(--color-accent);
 }
@@ -136,21 +137,24 @@ body {
     background-color: var(--color-accent);
 }
 
-/* ハンバーガーメニュー（表示/非表示） */
+/* ハンバーガーメニュー */
 .menu-toggle {
     display: none;
 }
 
 .menu-button {
-    display: none;
+    display: none; /* デフォルトは非表示 */
     flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 24px;
     cursor: pointer;
-    gap: 5px;
+    margin-left: auto; /* モバイル時に右寄せ */
 }
 
 .menu-button span {
     display: block;
-    width: 24px;
+    width: 100%;
     height: 2px;
     background-color: var(--color-text);
     border-radius: 2px;
@@ -161,8 +165,8 @@ body {
 .slide-menu {
     position: fixed;
     top: 0;
-    right: -300px;
-    width: 300px;
+    right: -100%; /* %を使用して画面幅に対応 */
+    width: min(300px, 80vw); /* 画面幅が小さい場合は80vw */
     height: 100vh;
     background-color: var(--color-primary);
     z-index: 99;
@@ -175,7 +179,6 @@ body {
     display: flex;
     flex-direction: column;
     padding: var(--spacing-lg);
-    gap: var(--spacing-md);
 }
 
 .slide-nav-button {
@@ -188,39 +191,32 @@ body {
     text-align: left;
     transition: var(--transition);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-weight: 500;
 }
 
 .slide-nav-button:hover {
     color: var(--color-accent);
-    padding-left: var(--spacing-md);
+    padding-left: var(--spacing-sm);
 }
 
-/* メニュー表示時のスタイル */
-.menu-toggle:checked {
-    /* 状態管理用 */
-}
-
+/* ハンバーガーメニューの開閉アニメーション */
 .menu-toggle:checked ~ .slide-menu {
     right: 0;
 }
 
-.menu-toggle:checked ~ .menu-button span:nth-child(1) {
-    transform: rotate(45deg) translateY(11px);
+.menu-toggle:checked ~ .navbar .menu-button span:nth-child(1) {
+    transform: translateY(11px) rotate(45deg);
 }
 
-.menu-toggle:checked ~ .menu-button span:nth-child(2) {
+.menu-toggle:checked ~ .navbar .menu-button span:nth-child(2) {
     opacity: 0;
 }
 
-.menu-toggle:checked ~ .menu-button span:nth-child(3) {
-    transform: rotate(-45deg) translateY(-11px);
+.menu-toggle:checked ~ .navbar .menu-button span:nth-child(3) {
+    transform: translateY(-11px) rotate(-45deg);
 }
 
-/* パンくずリスト背後のオーバーレイ */
 .menu-toggle:checked ~ .breadcrumb,
-.menu-toggle:checked ~ .container,
-.menu-toggle:checked ~ .footer {
+.menu-toggle:checked ~ .container-main {
     filter: brightness(0.8);
     pointer-events: none;
 }
@@ -228,17 +224,17 @@ body {
 /* ==========================================
    パンくずリスト
    ========================================== */
-
 .breadcrumb {
+    width: 100%;
     max-width: var(--max-width);
     margin: var(--spacing-md) auto 0;
     padding: 0 var(--spacing-lg);
-    transition: var(--transition);
 }
 
 .breadcrumb-nav {
     display: flex;
     align-items: center;
+    flex-wrap: wrap; /* 長くなった時に折り返す */
     gap: var(--spacing-xs);
     font-size: var(--font-size-sm);
 }
@@ -246,7 +242,6 @@ body {
 .breadcrumb-item {
     color: var(--color-accent);
     text-decoration: none;
-    cursor: pointer;
     transition: color var(--transition);
 }
 
@@ -254,15 +249,11 @@ body {
     text-decoration: underline;
 }
 
-.breadcrumb-item::after {
+.breadcrumb-item:not(:last-child)::after {
     content: '>';
     margin-left: var(--spacing-xs);
     color: var(--color-text-light);
-}
-
-.breadcrumb-item:last-child::after {
-    content: '';
-    margin-left: 0;
+    display: inline-block;
 }
 
 .breadcrumb-item.current {
@@ -273,485 +264,120 @@ body {
 /* ==========================================
    メインコンテンツ
    ========================================== */
-
 .container-main {
+    flex: 1; /* フッターを下部に押し下げるため */
+    width: 100%;
+    max-width: var(--max-width);
     margin: 0 auto;
-    transition: var(--transition);
+    padding: var(--spacing-md) var(--spacing-lg);
 }
 
 .content {
-    min-height: auto;
     animation: fadeIn 0.4s ease;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* ==========================================
-   ホームページ
+   ホームページ (スライダー等)
    ========================================== */
-
 .home-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    max-width: 100%;
+    gap: var(--spacing-xl);
 }
 
 .home-intro {
-    flex: 0 0 auto;
-    max-width: var(--max-width);
-    margin: 0 auto;
-    width: 100%;
-    padding: var(--spacing-xl) var(--spacing-lg);
     text-align: center;
 }
 
 .home-intro h1 {
     font-size: var(--font-size-2xl);
     margin-bottom: var(--spacing-md);
-    font-weight: 300;
-    letter-spacing: -1px;
     color: var(--color-primary);
 }
 
 .home-intro p {
     font-size: var(--font-size-base);
     color: var(--color-text-light);
-    line-height: 1.8;
     max-width: 600px;
     margin: 0 auto;
 }
 
-.cta-button {
-    display: inline-block;
-    padding: var(--spacing-md) var(--spacing-lg);
-    background-color: var(--color-primary);
-    color: white;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    border-radius: 2px;
-    font-size: var(--font-size-base);
-    font-weight: 600;
-    transition: var(--transition);
-    letter-spacing: 0.5px;
-}
-
-.cta-button:hover {
-    background-color: var(--color-accent);
-    transform: translateY(-2px);
-}
-
-/* ==========================================
-   店舗リスト
-   ========================================== */
-
-.container {
-    max-width: var(--max-width);
-    margin: var(--spacing-xl) auto;
-    padding: 0 var(--spacing-lg);
-    transition: var(--transition);
-}
-
-.container h2 {
-    font-size: var(--font-size-xl);
-    margin-bottom: var(--spacing-lg);
-}
-
-.shops-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--spacing-lg);
-    margin-top: var(--spacing-lg);
-}
-
-.shop-card {
-    background-color: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    overflow: hidden;
-    transition: var(--transition);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-}
-
-.shop-card:hover {
-    border-color: var(--color-primary);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    transform: translateY(-4px);
-}
-
-.shop-card-image {
-    width: 100%;
-    height: 200px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: var(--font-size-lg);
-    font-weight: 300;
-    text-align: center;
-}
-
-.shop-card-content {
-    padding: var(--spacing-lg);
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.shop-card h3 {
-    font-size: var(--font-size-lg);
-    font-weight: 600;
-    margin-bottom: var(--spacing-sm);
-    letter-spacing: -0.5px;
-}
-
-.shop-card p {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-light);
-    margin-bottom: var(--spacing-md);
-    flex: 1;
-    line-height: 1.6;
-}
-
-.shop-card-footer {
-    display: flex;
-    gap: var(--spacing-sm);
-    margin-top: auto;
-}
-
-.shop-button {
-    flex: 1;
-    padding: var(--spacing-sm);
-    background-color: white;
-    color: var(--color-primary);
-    border: 1px solid var(--color-primary);
-    border-radius: 2px;
-    cursor: pointer;
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    transition: var(--transition);
-    text-align: center;
-}
-
-.shop-button:hover {
-    background-color: var(--color-primary);
-    color: white;
-}
-
-/* ==========================================
-   詳細ページ
-   ========================================== */
-
-.shop-detail {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.detail-header {
-    margin-bottom: var(--spacing-xl);
-}
-
-.detail-image {
-    width: 100%;
-    height: 400px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    margin-bottom: var(--spacing-lg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 2rem;
-    border-radius: 4px;
-}
-
-.detail-header h2 {
-    font-size: var(--font-size-2xl);
-    font-weight: 300;
-    letter-spacing: -1px;
-    margin-bottom: var(--spacing-md);
-}
-
-.detail-meta {
-    display: flex;
-    gap: var(--spacing-lg);
-    padding: var(--spacing-md);
-    background-color: #f9f9f9;
-    border-radius: 4px;
-    margin-bottom: var(--spacing-xl);
-    flex-wrap: wrap;
-}
-
-.detail-meta-item {
-    flex: 1;
-    min-width: 200px;
-}
-
-.detail-meta-label {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-light);
-    margin-bottom: var(--spacing-xs);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.detail-meta-value {
-    font-size: var(--font-size-base);
-    color: var(--color-text);
-}
-
-.detail-content {
-    margin-bottom: var(--spacing-xl);
-    line-height: 1.8;
-}
-
-.detail-content h3 {
-    font-size: var(--font-size-xl);
-    font-weight: 600;
-    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
-}
-
-.detail-content p {
-    margin-bottom: var(--spacing-md);
-    color: var(--color-text-light);
-}
-
-.gallery {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-md);
-    margin: var(--spacing-lg) 0;
-}
-
-.gallery-item {
-    width: 100%;
-    height: 250px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 300;
-    text-align: center;
-}
-
-.back-button {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-md) var(--spacing-lg);
-    background-color: var(--color-primary);
-    color: white;
-    border: none;
-    border-radius: 2px;
-    cursor: pointer;
-    font-size: var(--font-size-base);
-    font-weight: 600;
-    transition: var(--transition);
-    margin-top: var(--spacing-xl);
-}
-
-.back-button:hover {
-    background-color: var(--color-accent);
-    transform: translateX(-4px);
-}
-
-.back-button::before {
-    content: '←';
-    font-size: 1.2em;
-}
-
-/* ==========================================
-   プレースホルダーページ
-   ========================================== */
-
-.placeholder {
-    text-align: center;
-    padding: var(--spacing-xl) var(--spacing-lg);
-}
-
-.placeholder h2 {
-    font-size: var(--font-size-2xl);
-    margin-bottom: var(--spacing-md);
-    font-weight: 300;
-}
-
-.placeholder p {
-    font-size: var(--font-size-lg);
-    color: var(--color-text-light);
-    margin-bottom: var(--spacing-lg);
-}
-
-/* ==========================================
-   フッター
-   ========================================== */
-
-.footer {
-    background-color: var(--color-primary);
-    color: white;
-    text-align: center;
-    padding: var(--spacing-lg);
-    margin-top: var(--spacing-xl);
-    font-size: var(--font-size-sm);
-    transition: var(--transition);
-}
-
-/* ==========================================
-   レスポンシブデザイン
-   ========================================== */
-
-@media (max-width: 768px) {
-    :root {
-        --font-size-base: 15px;
-        --spacing-lg: 1.5rem;
-    }
-    
-    .main-nav {
-        display: none;
-    }
-    
-    .menu-button {
-        display: flex;
-    }
-    
-    .navbar-container {
-        padding: 0 var(--spacing-md);
-    }
-    
-    .logo {
-        font-size: var(--font-size-lg);
-    }
-    
-    .shops-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .home-hero h2 {
-        font-size: var(--font-size-xl);
-    }
-    
-    .detail-meta {
-        flex-direction: column;
-        gap: var(--spacing-md);
-    }
-    
-    .gallery {
-        grid-template-columns: 1fr;
-    }
-    
-    .gallery-item {
-        height: 200px;
-    }
-}
-
-/* ==========================================
-   スライダー（ホームページ用）
-   ========================================== */
-
 .slider-wrapper {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--spacing-lg);
+    width: 100%;
+    padding: var(--spacing-md);
     background: radial-gradient(circle at center, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
 }
 
 .slider {
     position: relative;
     width: 100%;
-    max-width: var(--max-width);
-    height: 100%;
-    max-height: 500px;
+    aspect-ratio: 21 / 9; /* 横長の比率を維持 */
+    min-height: 300px;
     overflow: hidden;
-    border-radius: 16px;
+    border-radius: 12px;
     background-color: white;
-    box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.08),
-        inset 0 0 50px rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 .slider-track {
     display: flex;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
     height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slider-item {
     flex: 0 0 100%;
     display: flex;
-    background-color: white;
-    overflow: hidden;
+    height: 100%;
 }
 
 .slider-item-image {
-    flex: 0 0 60%;
-    overflow: hidden;
+    flex: 1; /* 割合で分割 */
     background: linear-gradient(135deg, #a8edea 0%, #fed6e3 50%, #ffd89b 100%);
     position: relative;
-}
-
-.slider-item-image::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent 50%);
-    pointer-events: none;
 }
 
 .slider-item-image img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(-10px 0 20px rgba(0, 0, 0, 0.1));
+    object-fit: contain; /* 画像全体を綺麗に収める */
 }
 
 .slider-item-content {
-    flex: 1;
-    padding: var(--spacing-lg);
+    flex: 1; /* 割合で分割 */
+    padding: var(--spacing-xl);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(250, 240, 245, 0.8) 100%);
+    background: #fafafa;
 }
 
 .slider-item-content h3 {
     font-size: var(--font-size-lg);
-    font-weight: 600;
-    margin-bottom: 0;
-    letter-spacing: -0.5px;
     color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
 }
 
-.slider-item-subtitle {
-    font-size: var(--font-size-base);
+.slider-item-subtitle,
+.slider-item-date {
+    font-size: var(--font-size-sm);
     color: #ff8fab;
-    font-weight: 600;
-    margin-bottom: 0;
+    margin-bottom: var(--spacing-xs);
 }
 
 .slider-item-description {
     font-size: var(--font-size-sm);
     color: var(--color-text-light);
     margin-bottom: var(--spacing-md);
-    line-height: 1.6;
 }
 
 .slider-cta {
@@ -763,58 +389,44 @@ body {
     border-radius: 6px;
     cursor: pointer;
     font-size: var(--font-size-sm);
-    font-weight: 600;
-    transition: var(--transition);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .slider-cta:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
+/* スライダー操作ボタン */
 .slider-button {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
+    width: clamp(36px, 4vw, 48px);
+    aspect-ratio: 1; /* 正方形を維持 */
     background-color: rgba(255, 255, 255, 0.9);
-    color: var(--color-primary);
     border: none;
-    border-radius: 12px;
+    border-radius: 50%;
     cursor: pointer;
-    transition: var(--transition);
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    font-weight: bold;
+    transition: var(--transition);
 }
 
 .slider-button:hover {
     background-color: white;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-    transform: translateY(-50%) scale(1.05);
+    transform: translateY(-50%) scale(1.1);
 }
 
-.slider-arrow {
-    font-size: 1.5em;
-    display: block;
-}
-
-.slider-button-prev {
-    left: var(--spacing-lg);
-}
-
-.slider-button-next {
-    right: var(--spacing-lg);
-}
+.slider-button-prev { left: var(--spacing-md); }
+.slider-button-next { right: var(--spacing-md); }
 
 .slider-dots {
     position: absolute;
-    bottom: var(--spacing-lg);
+    bottom: var(--spacing-sm);
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -834,127 +446,225 @@ body {
 
 .slider-dot.active {
     background-color: var(--color-primary);
-    width: 28px;
+    width: 24px;
     border-radius: 5px;
 }
 
-.slider-dot:hover {
-    background-color: rgba(0, 0, 0, 0.4);
+/* ==========================================
+   店舗リスト
+   ========================================== */
+.shops-grid {
+    display: grid;
+    /* 画面幅に応じて列数を自動調整、最小幅280px */
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+.shop-card {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.shop-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
+
+.shop-card-image {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* 固定高さを廃止 */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-2xl);
+}
+
+.shop-card-content {
+    padding: var(--spacing-md);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.shop-card h3 {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-xs);
+}
+
+.shop-card p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+    flex: 1;
+}
+
+.shop-button {
+    width: 100%;
+    padding: var(--spacing-sm);
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.shop-button:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+/* ==========================================
+   店舗詳細
+   ========================================== */
+.shop-detail {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.detail-image {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    min-height: 200px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    border-radius: 8px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.detail-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.detail-meta-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.gallery-item {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    margin-top: var(--spacing-xl);
+    transition: var(--transition);
+}
+
+.back-button:hover {
+    background-color: var(--color-accent);
+    transform: translateX(-4px);
 }
 
 /* ==========================================
    地図セクション
    ========================================== */
-
 .map-section {
-    margin-top: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
 }
 
 .map-info {
-    margin-bottom: 0;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
     background-color: #f9f9f9;
-    border-radius: 4px;
-}
-
-.map-info h3 {
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-md);
-}
-
-.map-info p {
-    margin-bottom: var(--spacing-sm);
-    color: var(--color-text-light);
+    border-radius: 8px;
 }
 
 .map-container {
-    margin-top: var(--spacing-lg);
-    border-radius: 4px;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    min-height: 300px;
+    border-radius: 8px;
     overflow: hidden;
 }
 
-/* ==========================================
-   ホームセクション
-   ========================================== */
-
-.home-section {
-    margin: var(--spacing-xl) 0;
-}
-
-.home-section h3 {
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-md);
+.map-container iframe {
+    width: 100%;
+    height: 100%;
 }
 
 /* ==========================================
-   レスポンシブデザイン（スライダー対応）
+   プレースホルダー・その他
    ========================================== */
-
-@media (max-width: 1024px) {
-    .home-container {
-        height: auto;
-    }
-
-    .home-intro {
-        padding: var(--spacing-lg);
-    }
-
-    .slider-wrapper {
-        min-height: 400px;
-        padding: var(--spacing-md);
-    }
-
-    .slider {
-        max-height: 400px;
-    }
-
-    .slider-item-image {
-        flex: 0 0 60%;
-    }
-
-    .slider-item-content {
-        padding: var(--spacing-md);
-    }
-
-    .slider-button {
-        width: 44px;
-        height: 44px;
-    }
-
-    .slider-button-prev {
-        left: var(--spacing-md);
-    }
-
-    .slider-button-next {
-        right: var(--spacing-md);
-    }
+.placeholder {
+    text-align: center;
+    padding: var(--spacing-xl) 0;
 }
 
+/* ==========================================
+   メディアクエリ (レスポンシブ対応)
+   ========================================== */
+
+/* タブレット〜スマートフォン向け */
 @media (max-width: 768px) {
-    .home-container {
-        height: auto;
+    .main-nav {
+        display: none;
+    }
+    
+    .menu-button {
+        display: flex;
     }
 
-    .home-intro {
+    .logo-text {
+        font-size: clamp(0.9rem, 3vw, 1.2rem);
+        white-space: normal; /* 折り返しを許可 */
+        line-height: 1.2;
+    }
+
+.home-intro {
         display: none;
     }
 
-    .home-intro h1 {
-        font-size: var(--font-size-lg);
-    }
-
-    .home-intro p {
-        display: none;
-    }
-
-    .slider-wrapper {
-        flex: auto;
-        min-height: 300px;
-        padding: var(--spacing-md);
-    }
-
+    /* スライダーを縦並びに変更 */
     .slider {
-        max-height: 350px;
+        aspect-ratio: auto; /* 縦長になるため解除 */
+        height: auto;
     }
 
     .slider-item {
@@ -962,90 +672,16 @@ body {
     }
 
     .slider-item-image {
-        flex: 0 0 150px;
-        width: 100%;
-        height: 150px;
+        aspect-ratio: 16 / 9; /* モバイル時は画像を上部に固定比率で表示 */
+        flex: none;
     }
 
     .slider-item-content {
-        display: grid;
-        grid-template-columns: 1fr 80px; /* ←右にボタン用スペース */
-        grid-template-rows: auto auto auto;
-        gap: 4px 8px;
-        padding: 8px;
-    }
-    .slider-item-content h3 {
-        grid-column: 1 / 3; /* 全幅 */
-    }
-
-    .slider-item-subtitle {
-        grid-column: 1 / 3;
-    }
-
-    .slider-item-description {
-        grid-column: 1 / 2; /* 左だけ */
+        padding: var(--spacing-md);
+        text-align: center;
     }
 
     .slider-cta {
-        grid-column: 2 / 3; /* 右側 */
-        align-self: center;
-        justify-self: end;
-        padding: 6px 8px;
-        font-size: 12px;
-    }
-    .slider-button {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2em;
-    }
-
-    .slider-button-prev {
-        left: var(--spacing-sm);
-    }
-
-    .slider-button-next {
-        right: var(--spacing-sm);
+        align-self: center; /* 中央揃え */
     }
 }
-
-@media (max-width: 480px) {
-    .home-intro {
-        display: none;
-    }
-
-    .home-intro h1 {
-        display: none;
-    }
-
-    .home-intro p {
-        display: none;
-    }
-
-    .slider-wrapper {
-        min-height: 250px;
-        padding: var(--spacing-md);
-    }
-
-    .slider {
-        max-height: 300px;
-    }
-
-    .slider-item {
-        flex-direction: column;
-    }
-
-    .slider-item-image {
-        height: 120px;
-    }
-
-    .slider-button {
-        width: 36px;
-        height: 36px;
-        font-size: 0.9em;
-    }
-
-    .slider-dots {
-        bottom: var(--spacing-sm);
-    }
-}
-

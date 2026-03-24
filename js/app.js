@@ -79,28 +79,28 @@ const eventsTemplate = () => `
 `;
 
 // 地図ページ
+// app.js 内の mapTemplate を修正
 const mapTemplate = () => `
-    <h2>アクセス</h2>
     <div class="map-section">
+        <div class="home-intro">
+            <h1>アクセス・地図</h1>
+        </div>
         <div class="map-info">
-            <h3>大潟ショッピングセンター</h3>
-            <p><strong>住所：</strong>新潟県上越市大潟区土底浜1055-1</p>
-            <p><strong>営業時間：</strong>10:00 - 21:00</p>
+            <p><strong>大潟ショッピングセンター</strong></p>
+            <p>〒949-3112 新潟県上越市大潟区土底浜1055-1</p>
         </div>
         <div class="map-container">
-            <iframe 
-                width="100%" 
-                height="500" 
-                frameborder="0" 
-                style="border:0; border-radius: 4px;" 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3110.8934523457396!2d137.86897!3d37.19516!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5ff57ad42f567c59%3A0x3a3b3b3b3b3b3b3b!2z5aSW6Zut5biC5rCR57Se57q_5bel5rCR5oql5pil!5e0!3m2!1sja!2sjp!4v1234567890"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3176.8057368505574!2d138.3283694!3d37.2285863!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5ff5d120aed68c23%3A0x59131a46eeb49b81!2z44OK44Or44K5IOWkp-a9n-OCt-ODp-ODg-ODlOODs-OCsOOCu-ODs-OCv-ODvOW6lw!5e0!3m2!1sja!2sjp!4v1774361927374!5m2!1sja!2sjp"
+                width="600" 
+                height="450" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy" referrerpolicy="no-referrer-when-downgrade">
             </iframe>
         </div>
     </div>
 `;
+
 
 /* ==========================================
    データ（モックとして）
