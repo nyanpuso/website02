@@ -73,8 +73,7 @@ const shopDetailTemplate = (shopId) => {
 const mapTemplate = () => `
     <div class="map-section">
         <div class="map-container">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3198.8353394622285!2d138.252033!3d37.245229!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDE0JzQyLjgiTiAxMzhCsDE1JDA3LjMiRQ!5e0!3m2!1sja!2sjp!4v1620000000000!5m2!1sja!2sjp" 
-            style="border:0; width:100%; height:450px;" allowfullscreen="" loading="lazy"></iframe>
+<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3176.8057380247756!2d138.32836937565523!3d37.228586272128176!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5ff5d120ae93f517%3A0x45658d62fe65ae95!2z44CSOTQ5LTMxMTIg5paw5r2f55yM5LiK6LaK5biC5aSn5r2f5Yy65Zyf5bqV5rWc77yR77yQ77yV77yV4oiS77yR!5e0!3m2!1sja!2sjp!4v1774381298286!5m2!1sja!2sjp" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
     </div>
 `;
