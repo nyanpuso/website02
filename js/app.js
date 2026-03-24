@@ -109,37 +109,57 @@ const mapTemplate = () => `
 // スライド用データ（イベント・おすすめ商品・募集情報など）
 const slidesData = [
     {
-        id: 'slide-1',
-        title: '現在開催中のイベント',
-        subtitle: '春の大セール',
-        image: 'slides/event-spring.jpg',
-        description: '全店舗で春の大セールを開催中！最大50%OFFの商品も。',
+        id: 'slide-0',
+        title: 'いらっしゃいませ。',
+        description: '地域のお買い物スペース<br><strong style="color: #ff6b6b;">大潟ショッピングセンター</strong>',
+        image: 'slides/entrance.png',
         type: 'event',
     },
     {
-        id: 'slide-2',
-        title: 'サンプル店舗A',
-        subtitle: 'おすすめメニュー',
+        id: 'slide-1',
+        title: '現在開催中のイベント',
+        subtitle: '婦人洋品ベル　冬物売り尽くしセール',
+        date: '2026年3月1日～3月31日',
+        image: 'slides/event-spring.jpg',
+        description: '冬物売り尽くしセールを開催中！<br><strong style="color: #ff6b6b;">最大50%OFF</strong>の商品も。<br>冬物ファッションを一挙に大放出！',
+        type: 'event',
+    },
+        {
+        id: 'slide-3',
+        title: '4月5日(日)　開催予定のイベント',
+        subtitle: 'カイロプラクティック体験イベント',
+        date: '2026年4月5日 14:00～16:00',
+        image: 'slides/event-chiro.jpg',
+        description: '骨盤矯正や姿勢改善の体験イベントを開催中！<br>専門スタッフが<strong>丁寧に対応</strong>します。<br><span style="color: #ff6b6b;">参加費無料</span>',
+        type: 'event',
+    },
+    {
+        id: 'slide-4',
+        title: '薬局まえかわ',
+        subtitle: '年中無休',
+        date: '毎日営業中',
         image: 'slides/shop-a-menu.jpg',
-        description: '今月のおすすめ：春限定ブレンドコーヒー 新発売！',
+        description: '各種お薬を取り揃えています。<br>健康相談も<strong>お気軽に</strong>どうぞ。<br>風邪薬・胃腸薬・ビタミン剤など常備薬も充実！',
         type: 'shop',
         shopId: 'shop-a',
     },
     {
-        id: 'slide-3',
-        title: 'サンプル店舗B',
-        subtitle: 'イベント情報',
+        id: 'slide-5',
+        title: 'ヘアースタジオwitch',
+        subtitle: '',
+        date: '2026年4月15日～4月30日',
         image: 'slides/shop-b-event.jpg',
-        description: '来月、シェフ直伝のパスタ教室を開催予定です。',
+        description: '<strong>女性スタッフが丁寧に対応します。</strong><br>着物の着付けも可能です。<br><span style="color: #ff6b6b;">おまちしております。</span>',
         type: 'shop',
         shopId: 'shop-b',
     },
     {
-        id: 'slide-4',
+        id: 'slide-6',
         title: '出店者募集',
-        subtitle: '大潟ショッピングセンター',
+        subtitle: 'イベントスペース・賃貸',
+        date: '随時受付中',
         image: 'slides/recruitment.jpg',
-        description: '新しい店舗の出店者を募集しています。詳しくはお問い合わせください。',
+        description: '新しい店舗の<strong>出店者を募集</strong>しています。<br>賃料5,000円/日　長期の場合は12万円(4,000円/日、応相談)<br>詳しくは025-534-4535へお問い合わせください。<br><span style="color: #ff6b6b;">お気軽にご相談ください。</span>',
         type: 'recruitment',
     },
 ];
@@ -385,19 +405,32 @@ const app = {
 
         if (!sliderTrack || !sliderDots) return;
 
-        const tracks = slidesData.map((slide, index) => `
-            <div class="slider-item" data-index="${index}">
-                <div class="slider-item-image">
-                    <img src="${slide.image}" alt="${slide.title}" onerror="this.src='slides/placeholder.svg'">
+        const tracks = slidesData.map((slide, index) => {
+            if (slide.type === 'hero') {
+                return `
+                    <div class="slider-item hero" data-index="${index}">
+                        <div class="slider-item-image">
+                            <img src="${slide.image}" alt="${slide.title || 'ヒーロースライド'}" onerror="this.src='slides/placeholder.svg'">
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="slider-item" data-index="${index}">
+                    <div class="slider-item-image">
+                        <img src="${slide.image}" alt="${slide.title}" onerror="this.src='slides/placeholder.svg'">
+                    </div>
+                    <div class="slider-item-content">
+                        <h3>${slide.title}</h3>
+                        ${slide.subtitle ? `<p class="slider-item-subtitle">${slide.subtitle}</p>` : ''}
+${slide.date ? `<p class="slider-item-date">${slide.date}</p>` : ''}
+                        <p class="slider-item-description">${slide.description || ''}</p>
+                        ${slide.type === 'shop' ? `<button class="slider-cta" onclick="app.goToShopDetail('${slide.shopId}')">詳細を見る</button>` : ''}
+                    </div>
                 </div>
-                <div class="slider-item-content">
-                    <h3>${slide.title}</h3>
-                    <p class="slider-item-subtitle">${slide.subtitle}</p>
-                    <p class="slider-item-description">${slide.description}</p>
-                    ${slide.type === 'shop' ? `<button class="slider-cta" onclick="app.goToShopDetail('${slide.shopId}')">詳細を見る</button>` : ''}
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
         sliderTrack.innerHTML = tracks;
 

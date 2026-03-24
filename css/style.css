@@ -71,19 +71,34 @@ body {
 
 .navbar-container {
     max-width: var(--max-width);
-    height: 100%;
+    height: var(--nav-height);
+    align-items: center;
     margin: 0 auto;
     padding: 0 var(--spacing-lg);
     display: flex;
-    align-items: center;
     justify-content: space-between;
 }
 
+
 .logo {
+    height: 100%;
+}
+
+.logo-text {
     font-size: var(--font-size-xl);
     font-weight: 700;
-    letter-spacing: -0.5px;
-    cursor: pointer;
+}
+
+.logo-symbol {
+    display: flex;
+    align-items: center;
+    height: 100%;  /* ←追加 */
+}
+
+.logo-symbol img {
+    max-height: 100%;  /* ←変更（ここ重要） */
+    width: auto;
+    object-fit: contain;
 }
 
 .main-nav {
@@ -684,7 +699,7 @@ body {
 }
 
 .slider-item-image {
-    flex: 0 0 40%;
+    flex: 0 0 60%;
     overflow: hidden;
     background: linear-gradient(135deg, #a8edea 0%, #fed6e3 50%, #ffd89b 100%);
     position: relative;
@@ -704,7 +719,7 @@ body {
 .slider-item-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     filter: drop-shadow(-10px 0 20px rgba(0, 0, 0, 0.1));
 }
 
@@ -720,7 +735,7 @@ body {
 .slider-item-content h3 {
     font-size: var(--font-size-lg);
     font-weight: 600;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 0;
     letter-spacing: -0.5px;
     color: var(--color-primary);
 }
@@ -729,7 +744,7 @@ body {
     font-size: var(--font-size-base);
     color: #ff8fab;
     font-weight: 600;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 0;
 }
 
 .slider-item-description {
@@ -836,7 +851,7 @@ body {
 }
 
 .map-info {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: 0;
     padding: var(--spacing-lg);
     background-color: #f9f9f9;
     border-radius: 4px;
@@ -894,7 +909,7 @@ body {
     }
 
     .slider-item-image {
-        flex: 0 0 35%;
+        flex: 0 0 60%;
     }
 
     .slider-item-content {
@@ -921,7 +936,7 @@ body {
     }
 
     .home-intro {
-        padding: var(--spacing-md);
+        display: none;
     }
 
     .home-intro h1 {
@@ -929,7 +944,7 @@ body {
     }
 
     .home-intro p {
-        font-size: var(--font-size-sm);
+        display: none;
     }
 
     .slider-wrapper {
@@ -953,9 +968,31 @@ body {
     }
 
     .slider-item-content {
-        padding: var(--spacing-md);
+        display: grid;
+        grid-template-columns: 1fr 80px; /* ←右にボタン用スペース */
+        grid-template-rows: auto auto auto;
+        gap: 4px 8px;
+        padding: 8px;
+    }
+    .slider-item-content h3 {
+        grid-column: 1 / 3; /* 全幅 */
     }
 
+    .slider-item-subtitle {
+        grid-column: 1 / 3;
+    }
+
+    .slider-item-description {
+        grid-column: 1 / 2; /* 左だけ */
+    }
+
+    .slider-cta {
+        grid-column: 2 / 3; /* 右側 */
+        align-self: center;
+        justify-self: end;
+        padding: 6px 8px;
+        font-size: 12px;
+    }
     .slider-button {
         width: 40px;
         height: 40px;
@@ -973,16 +1010,15 @@ body {
 
 @media (max-width: 480px) {
     .home-intro {
-        padding: var(--spacing-md);
+        display: none;
     }
 
     .home-intro h1 {
-        font-size: var(--font-size-base);
-        margin-bottom: var(--spacing-sm);
+        display: none;
     }
 
     .home-intro p {
-        font-size: var(--font-size-sm);
+        display: none;
     }
 
     .slider-wrapper {
