@@ -449,7 +449,14 @@ body {
     width: 24px;
     border-radius: 5px;
 }
+/* フル画像モード (PC・タブレット表示時) */
+.slider-item.full-image-mode .slider-item-content {
+    display: none; /* テキストエリアを隠す */
+}
 
+.slider-item.full-image-mode .slider-item-image {
+    flex: 1; /* 隣の要素が消えるため、画像エリアが100%の幅に自動で広がります */
+}
 /* ==========================================
    店舗リスト
    ========================================== */
@@ -683,5 +690,10 @@ body {
 
     .slider-cta {
         align-self: center; /* 中央揃え */
+    }
+
+/* モバイル時はフル画像モードでもテキストエリアを表示する */
+    .slider-item.full-image-mode .slider-item-content {
+        display: flex; /* もともと display: flex; で作られているため flex で再表示 */
     }
 }

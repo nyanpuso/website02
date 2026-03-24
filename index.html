@@ -8,37 +8,30 @@
 </head>
 <body>
     
-    <!-- ハンバーガーメニュー -->
     <input type="checkbox" id="menu-toggle" class="menu-toggle">
     
-    <!-- ナビゲーション -->
-    <nav class="navbar">
-        <div class="navbar-container">
-<div class="logo">
-    <span class="logo-symbol">
-        <img src="assets/images/logo_ohgatasc.png">
-    </span>
-</div>
-<h1 class="logo-text">大潟ショッピングセンター</h1>
-            
-            <!-- メインナビ -->
-            <div class="main-nav">
-                <button class="nav-button" data-page="home">ホーム</button>
-                <button class="nav-button" data-page="shops">店舗</button>
-                <button class="nav-button" data-page="events">イベント</button>
-                <button class="nav-button" data-page="map">地図</button>
-            </div>
-            
-            <!-- ハンバーガーメニュー -->
-            <label for="menu-toggle" class="menu-button">
-                <span></span>
-                <span></span>
-                <span></span>
-            </label>
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="#" class="logo" data-page="home">
+            <span class="logo-symbol">
+                <img src="assets/images/logo_ohgatasc.png" alt="ロゴ">
+            </span>
+            <h1 class="logo-text">大潟ショッピングセンター</h1>
+        </a>
+        
+        <div class="main-nav">
+            <button class="nav-button" data-page="home">ホーム</button>
+            <button class="nav-button" data-page="shops">店舗</button>
+            <button class="nav-button" data-page="events">イベント</button>
+            <button class="nav-button" data-page="map">地図</button>
         </div>
-    </nav>
+        
+        <label for="menu-toggle" class="menu-button">
+            <span></span><span></span><span></span>
+        </label>
+    </div>
+</nav>
     
-    <!-- スライドメニュー -->
     <div class="slide-menu">
         <div class="slide-menu-content">
             <button class="slide-nav-button" data-page="home">ホーム</button>
@@ -48,21 +41,17 @@
         </div>
     </div>
     
-    <!-- パンくずリスト -->
-    <div class="breadcrumb">
-        <nav class="breadcrumb-nav" id="breadcrumb">
-            <a href="#" class="breadcrumb-item" data-page="home">ホーム</a>
-        </nav>
-    </div>
-    
-    <!-- メインコンテンツ -->
     <main class="container-main">
+        <div class="breadcrumb">
+            <nav class="breadcrumb-nav" id="breadcrumb">
+                <a href="#" class="breadcrumb-item" data-page="home">ホーム</a>
+            </nav>
+        </div>
+
         <section id="main-content" class="content">
-            <!-- ここに動的コンテンツが読み込まれる -->
-        </section>
+            </section>
     </main>
 
-    
     <script src="js/app.js"></script>
 </body>
 </html>
