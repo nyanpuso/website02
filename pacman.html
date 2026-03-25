@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navbar Button Variations</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #181717;
+    }
+
+    .section {
+      padding: 30px 20px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #666;
+      font-size: 14px;
+      letter-spacing: 0.1em;
+    }
+
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+
+.btn-pacman {
+  position: relative;
+  display: inline-block;
+  padding: 12px 26px;
+  border: 1px solid #333;
+  overflow: hidden;
+}
+
+/* パックマン */
+.btn-pacman::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+/* 完成アニメーション */
+@keyframes pacman-move {
+
+  /* ===== 上（→） ===== */
+  0% {
+    top: 0;
+    left: 0;
+    background: conic-gradient(from 90deg, transparent 40deg, #333 40deg 320deg, transparent 320deg);
+  }
+
+  6% {
+    background: conic-gradient(from 90deg, transparent 10deg, #333 10deg 350deg, transparent 350deg);
+  }
+
+  12% {
+    background: conic-gradient(from 90deg, transparent 40deg, #333 40deg 320deg, transparent 320deg);
+  }
+
+  25% {
+    top: 0;
+    left: calc(100% - 16px);
+  }
+
+  /* ===== 右（↓） ===== */
+  25.01% {
+    background: conic-gradient(from 180deg, transparent 40deg, #333 40deg 320deg, transparent 320deg);
+  }
+
+  31% {
+    background: conic-gradient(from 180deg, transparent 10deg, #333 10deg 350deg, transparent 350deg);
+  }
+
+  37% {
+    background: conic-gradient(from 180deg, transparent 40deg, #333 40deg 320deg, transparent 320deg);
+  }
+
+  50% {
+    top: calc(100% - 16px);
+    left: calc(100% - 16px);
+  }
+
+  /* ===== 下（←） ===== */
+  50.01% {
+    background: conic-gradient(from 270deg, transparent 40deg, #333 40deg 320deg, transparent 320deg);
+  }
+
+  56% {
+    background: conic-gradient(from 270deg, transparent 10deg, #333 10deg 350deg, transparent 350deg);
+  }
+
+  62% {
+    background: conic-gradient(from 270deg, transparent 40deg, #333 40deg 320deg, transparent 320deg);
+  }
+
+  75% {
+    top: calc(100% - 16px);
+    left: 0;
+  }
+
+  /* ===== 左（↑） ===== */
+  75.01% {
+    background: conic-gradient(from 0deg, transparent 40deg, #333 40deg 320deg, transparent 320deg);
+  }
+
+  81% {
+    background: conic-gradient(from 0deg, transparent 10deg, #333 10deg 350deg, transparent 350deg);
+  }
+
+  87% {
+    background: conic-gradient(from 0deg, transparent 40deg, #333 40deg 320deg, transparent 320deg);
+  }
+
+  100% {
+    top: 0;
+    left: 0;
+  }
+}
+
+/* 発動 */
+.btn-pacman:hover::after {
+  opacity: 1;
+  animation: pacman-move 3s linear infinite;
+}
+  </style>
+</head>
+<body>
+
+  <div class="section">
+    <div class="title">CONTACT ボタンバリエーション</div>
+    <div class="row">
+<a href="#" class="btn-pacman">CONTACT</a>
+    </div>
+  </div>
+
+</body>
+</html>

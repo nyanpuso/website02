@@ -106,35 +106,93 @@ body {
 
 .main-nav {
     display: flex;
-    gap: var(--spacing-lg);
-    margin-left: auto; /* 右寄せにする */
+    gap: var(--spacing-sm);
+    margin-left: auto;
+    align-items: center;
 }
 
+/* ==========================
+   ボタン本体
+   ========================== */
 .nav-button {
-    background: none;
-    border: none;
-    color: var(--color-text);
-    font-size: var(--font-size-base);
-    cursor: pointer;
-    padding: var(--spacing-xs);
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 36px;
+    padding: 0 14px;
+
+    border-radius: 999px; /* ←丸みで一気に洗練 */
+    border: 1px solid transparent;
+
+    font-size: var(--font-size-sm);
     font-weight: 500;
-    transition: color var(--transition);
+    color: var(--color-text);
+
+    background: transparent;
+    cursor: pointer;
+
+    overflow: hidden;
+
+    transition: 
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+
+letter-spacing: 0.02em;
 }
 
-.nav-button:hover,
+
+/* ホバー時のベース */
+.nav-button:hover {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
+}
+
+/* ==========================
+   アクティブ（現在地）
+   ========================== */
 .nav-button.active {
-    color: var(--color-accent);
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.15);
+    font-weight: 600;
 }
 
+/* 下線は削除（不要になる） */
 .nav-button.active::after {
-    content: '';
+    display: none;
+}
+
+/* ==========================
+   光エフェクト（強化版）
+   ========================== */
+.nav-button::after {
+    content: "";
     position: absolute;
-    bottom: -8px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: var(--color-accent);
+    top: 0;
+    left: -150%;
+    width: 150%;
+    height: 100%;
+
+    background: linear-gradient(
+        120deg,
+        transparent 30%,
+        rgba(0,0,0,0.08),
+        rgba(0,0,0,0.18),
+        rgba(0,0,0,0.08),
+        transparent 70%
+    );
+
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+}
+
+.nav-button:hover::after {
+    left: 150%;
 }
 
 /* ハンバーガーメニュー */
