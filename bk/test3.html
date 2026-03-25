@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大潟ショッピングセンター - Origin (0,0) Animation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body, html { margin: 0; padding: 0; overflow: hidden; font-family: sans-serif; background-color: #f0f0f0; }
+        #entrance-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #fff; z-index: 1000; display: flex; justify-content: center; align-items: center; }
+        #entrance-svg { width: 100%; height: 100%; max-width: 1200px; cursor: pointer; overflow: visible !important; }
+        .navbar { position: fixed; top: 0; width: 100%; background: #1a1a1a; color: #fff; padding: 15px 0; z-index: 100; opacity: 0; visibility: hidden; }
+        .navbar-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .logo-wrap { color: #e74c3c; font-weight: bold; }
+        .fly-in-target { color: #e74c3c; font-weight: bold; }
+        .final-title { color: #ffffff; opacity: 0; position: absolute; left: 0; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="entrance-overlay">
+    <svg id="entrance-svg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid slice">
+        <defs>
+            <filter id="soft-glow"><feGaussianBlur stdDeviation="40" /></filter>
+            <mask id="soft-building-mask">
+                <rect width="1000" height="500" fill="white" />
+                <circle id="mask-circle" cx="500" cy="350" r="0" fill="black" filter="url(#soft-glow)" />
+            </mask>
+        </defs>
+        
+        <g mask="url(#soft-building-mask)">
+            <rect x="100" y="150" width="800" height="250" fill="#ddd" rx="5" />
+            <rect x="420" y="300" width="160" height="100" fill="#bbb" />
+        </g>
+        
+        <circle id="light-effect" cx="500" cy="350" r="0" fill="#fff" filter="url(#soft-glow)" />
+
+        <g id="moving-elements-group">
+            <text id="target-logo-text" x="0" y="0" font-size="60" font-weight="bold" fill="#e74c3c" text-anchor="start">OHGATASC</text>
+            <text id="target-title-text" x="0" y="50" font-size="20" font-weight="bold" fill="#e74c3c" text-anchor="start">オオガタショッピングセンター</text>
+        </g>
+    </svg>
+</div>
+
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="logo-area" style="display:flex; align-items:center; gap:20px;">
+            <div class="logo-wrap">◆ OHGATASC</div>
+            <div style="position:relative; display:flex; align-items:center;">
+                <span class="fly-in-target">オオガタショッピングセンター</span>
+                <span class="final-title">大潟ショッピングセンター</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<script>
+    const svg = document.getElementById('entrance-svg');
+    const lightCircle = document.getElementById('light-effect');
+    const maskCircle = document.getElementById('mask-circle');
+    const movingGroup = document.getElementById('moving-elements-group');
+    const navbar = document.querySelector('.navbar');
+
+    // --- 初期配置の計算 ---
+    // 画面中央(500, 250)に見えるように配置。
+    // 文字の幅を考慮して、中央から少し左(x:350)にセットします。
+    gsap.set(movingGroup, { 
+        x: 350, 
+        y: 230, 
+        transformOrigin: "0% 0%" // 基準点を左上(0,0)に固定！
+    });
+
+    svg.addEventListener('click', () => {
+        const tl = gsap.timeline();
+
+        // 1. 光の広がり
+        tl.to([lightCircle, maskCircle], {
+            attr: { r: 1500 },
+            duration: 1.0,
+            ease: "power2.in",
+        });
+
+        // --- PHASE 1: 拡大 ＋ 左スライド ---
+        // scaleを上げても「左上(0,0)」が基準なので、文字は右下方向へ膨らみます。
+        // 左端(x:150)へ移動させつつ拡大。
+        tl.to(movingGroup, {
+            x: 150,      // ナビバーのロゴのX位置に合わせる
+            y: 200,      // 少し浮かび上がる
+            scale: 1.5,
+            duration: 1.0,
+            ease: "power2.out"
+        }, "-=0.5");
+
+        // --- PHASE 2: 垂直上昇 ＋ 縮小 ---
+        // X座標(150)は固定。 scaleを下げても左端ライン(x:150)は不動です。
+        tl.to(movingGroup, {
+            y: 45,       // ナビバーの高さにピタリと合わせる
+            scale: 0.45, // ナビバー内のサイズに縮小
+            duration: 1.2,
+            ease: "power3.inOut"
+        });
+
+        tl.add(() => {
+            gsap.to(navbar, { opacity: 1, visibility: "visible", duration: 0.3 });
+            const flyIn = document.querySelector('.fly-in-target');
+            const final = document.querySelector('.final-title');
+            gsap.to(flyIn, { opacity: 0, y: -10, duration: 0.4 });
+            gsap.to(final, { opacity: 1, y: 0, startAt: { y: 10 }, duration: 0.6 });
+            gsap.to("#entrance-overlay", { opacity: 0, display: "none", duration: 0.5 });
+        }, "-=0.2");
+    });
+</script>
+</body>
+</html>

@@ -1,24 +1,24 @@
 [
     {
-        "id": "shop-a",
-        "name": "大潟ベーカリー",
-        "category": "グルメ・食品",
-        "description": "地元産の小麦を使用した、毎日焼き立てのパンをお届けします。",
-        "image": "🍞",
-        "hours": "09:00 - 18:00",
+        "id": "shop-maekawa",
+        "name": "美と健康のまえかわ",
+        "category": "薬店",
+        "description": "健康のことなら何でもご相談ください。",
+        "image": "<image src=\"shops/images/shop-maekawa.jpg\" alt=\"美と健康のまえかわ\">",
+        "hours": "10:00 - 19:00",
         "tel": "025-XXX-XXXX",
-        "address": "大潟ショッピングセンター 1F",
-        "gallery": ["🥐", "🥖", "🥪"]
+        "address": "大潟ショッピングセンター 南口から",
+        "gallery": ["👁", "👅", "👃"]
     },
     {
-        "id": "shop-b",
-        "name": "フラワーショップ おおがた",
-        "category": "ライフスタイル",
-        "description": "季節の花々を取り揃えています。ギフト用の花束も承ります。",
-        "image": "🌻",
+        "id": "shop-witch",
+        "name": "hair studio witch",
+        "category": "ヘアースタジオ",
+        "description": "Witchは子どもから大人まで来店できるアットホームな美容室です<br><a href=\"http://hairstudio-witch.com/\" target=\"_blank\">公式サイトはこちら</a>",
+        "image": "<image src=\"shops/images/shop-witch.jpg\" alt=\"hair studio witch\">",
         "hours": "10:00 - 19:00",
-        "tel": "025-YYY-YYYY",
-        "address": "大潟ショッピングセンター 1F",
-        "gallery": ["🌷", "🌹", "🌸"]
+        "tel": "025-534-6643",
+        "address": "大潟ショッピングセンター　南口横",
+        "gallery": ["🧼", "👗", "👘"]
     }
 ]

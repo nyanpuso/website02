@@ -12,7 +12,7 @@
         "title": "開催中のイベント",
         "subtitle": "婦人用品ベル　冬物売りつくしセール",
         "description": "最大５０％OFF",
-        "image": "slides/images/event-spring.jpg",
+        "image": "slides/images/event-spring.png",
         "fullImage": false
     },
        {
@@ -21,13 +21,13 @@
         "title": "4/5（日）開催予定のイベント",
         "subtitle": "カイロプラクティク体験イベント",
         "description": "4月5日（日）に開催予定のカイロプラクティク体験イベントでは、<br>専門の施術師があなたの体の不調を改善するお手伝いをします。<br>肩こりや腰痛などでお悩みの方は、この機会にぜひご参加ください。",
-        "image": "slides/images/event-chiro.jpg",
+        "image": "slides/images/event-chiro.png",
         "fullImage": false
     },
     {
         "id": "shop-maekawa",
         "priority": 50,
-        "title": "薬局まえかわ",
+        "title": "美と健康のまえかわ",
         "description": "各種おくすりを取り揃えています。<br>年中無休で営業中。",
         "image": "shops/images/shop-maekawa.jpg",
         "fullImage": false
