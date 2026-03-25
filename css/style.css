@@ -80,28 +80,37 @@ body {
 }
 
 .logo {
-    height: 60%; /* ナビゲーションの高さに対する割合 */
-    min-height: 30px;
-    display: flex;
-    align-items: center;
-}
-
-.logo-symbol {
-    height: 100%;
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+    font-family: sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
 }
 
 .logo-symbol img {
-    height: 100%;
-    width: auto;
-    object-fit: contain;
+  height: 32px;
+  width: auto;
 }
 
-.logo-text {
-    font-size: clamp(1rem, 2vw, 1.5rem);
-    white-space: nowrap;
-    font-weight: 600;
+.logo-svg {
+  width: 220px;   /* ←これ重要 */
+  height: 40px;
+}
+
+.logo-svg text {
+    
+  font-size: 36px;
+  fill: #1a1a1a;
+}
+
+.logo:hover .logo-svg text {
+  fill: #555;
+}
+
+.logo:hover text {
+  fill: #555;
 }
 
 .main-nav {
