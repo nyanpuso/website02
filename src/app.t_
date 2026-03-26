@@ -1,0 +1,339 @@
+export {};
+
+/* ==========================================
+   1. 型定義
+   ========================================== */
+
+type PageType = 'home' | 'shops' | 'shop-detail' | 'map';
+
+interface Shop {
+    id: string;
+    name: string;
+    category: string;
+    image: string;
+    hours: string;
+    tel: string;
+    address: string;
+    description: string;
+}
+
+interface Slide {
+    image: string;
+    title: string;
+    description?: string;
+    priority: number;
+    fullImage?: boolean;
+}
+
+/* ==========================================
+   2. 状態管理
+   ========================================== */
+
+interface AppState {
+    page: PageType;
+    shopId: string | null;
+    currentSlideIndex: number;
+    shopsData: Shop[];
+    slidesData: Slide[];
+    autoPlayTimer: number | null;
+}
+
+const appState: AppState = {
+    page: 'home',
+    shopId: null,
+    currentSlideIndex: 0,
+    shopsData: [],
+    slidesData: [],
+    autoPlayTimer: null
+};
+
+/* ==========================================
+   3. DOM取得
+   ========================================== */
+
+const dom = {
+    getContent: (): HTMLElement | null =>
+        document.getElementById('main-content'),
+
+    getBreadcrumb: (): HTMLElement | null =>
+        document.getElementById('breadcrumb'),
+
+    getMenuToggle: (): HTMLInputElement | null =>
+        document.getElementById('menu-toggle') as HTMLInputElement | null
+};
+
+/* ==========================================
+   nav-button からラベルを取得する関数（←ここに追加）
+   ========================================== */
+
+function getNavLabels(): Record<string, string> {
+    const buttons = document.querySelectorAll('.main-nav .nav-button');
+    const map: Record<string, string> = {};
+
+    buttons.forEach(btn => {
+        const page = btn.getAttribute('data-page');
+        const label = btn.textContent?.trim() || "";
+        if (page) map[page] = label;
+    });
+
+    return map;
+}
+
+/* ==========================================
+   4. テンプレート
+   ========================================== */
+
+const homeTemplate = (): string => `
+<div class="home-container">
+    <div class="slider-wrapper">
+        <div class="slider">
+            <div class="slider-track" id="slider-track-home"></div>
+            <button class="slider-button slider-button-prev" onclick="app.slidePrev()">‹</button>
+            <button class="slider-button slider-button-next" onclick="app.slideNext()">›</button>
+            <div class="slider-dots" id="slider-dots"></div>
+        </div>
+    </div>
+</div>
+`;
+
+const shopsTemplate = (): string => `
+<div class="shops-container">
+    <div class="home-intro"><h1>店舗一覧</h1></div>
+    <div class="shops-grid">
+        ${appState.shopsData.map((shop: Shop) => `
+            <div class="shop-card">
+                <div class="shop-card-image">${shop.image}</div>
+                <div class="shop-card-content">
+                    <h3>${shop.name}</h3>
+                    <p>${shop.category}</p>
+                    <button class="shop-button" onclick="goToShopDetail('${shop.id}')">詳細を見る</button>
+                </div>
+            </div>
+        `).join('')}
+    </div>
+</div>
+`;
+
+const shopDetailTemplate = (shopId: string | null): string => {
+    const shop = appState.shopsData.find((s: Shop) => s.id === shopId);
+
+    if (!shop) {
+        return '<p>店舗が見つかりませんでした。</p>';
+    }
+
+    return `
+    <div class="shop-detail">
+        <div class="detail-image">${shop.image}</div>
+        <h1>${shop.name}</h1>
+        <div class="detail-meta">
+            <p><strong>営業時間:</strong> ${shop.hours}</p>
+            <p><strong>電話番号:</strong> ${shop.tel}</p>
+            <p><strong>場所:</strong> ${shop.address}</p>
+        </div>
+        <div class="detail-description"><p>${shop.description}</p></div>
+        <button class="back-button" onclick="app.goToPage('shops')">← 店舗一覧に戻る</button>
+    </div>
+    `;
+};
+
+const mapTemplate = (): string => `
+<div class="map-section">
+    <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?..." width="600" height="450"></iframe>
+    </div>
+</div>
+`;
+
+/* ==========================================
+   5. アプリ本体
+   ========================================== */
+
+const app = {
+    async init(): Promise<void> {
+        await this.loadAllData();
+        this.setupEventListeners();
+        this.render();
+    },
+
+    async loadAllData(): Promise<void> {
+        try {
+            const [shopsRes, slidesRes] = await Promise.all([
+                fetch('shops.json'),
+                fetch('slides.json')
+            ]);
+
+            const shops = await shopsRes.json() as Shop[];
+            const slides = await slidesRes.json() as Slide[];
+
+            appState.shopsData = shops;
+            appState.slidesData = slides.sort((a, b) => a.priority - b.priority);
+
+        } catch (error) {
+            console.error('Data load error:', error);
+        }
+    },
+
+    render(): void {
+        const content = dom.getContent();
+        if (!content) return;
+
+        if (appState.page === 'home') content.innerHTML = homeTemplate();
+        else if (appState.page === 'shops') content.innerHTML = shopsTemplate();
+        else if (appState.page === 'shop-detail') content.innerHTML = shopDetailTemplate(appState.shopId);
+        else if (appState.page === 'map') content.innerHTML = mapTemplate();
+
+        this.updateBreadcrumb();
+        this.updateActiveNav();
+
+        if (appState.page === 'home') {
+            this.initSlider();
+        } else {
+            this.stopSliderAutoPlay();
+        }
+
+        const toggle = dom.getMenuToggle();
+        if (toggle) toggle.checked = false;
+    },
+
+    goToPage(page: PageType, id: string | null = null): void {
+        appState.page = page;
+        appState.shopId = id;
+        this.render();
+        window.scrollTo(0, 0);
+    },
+
+updateBreadcrumb(): void {
+    const breadcrumb = dom.getBreadcrumb();
+    if (!breadcrumb) return;
+
+    const navLabels = getNavLabels();
+    const page = appState.page;
+
+    const items: { label: string; page?: PageType }[] = [];
+
+    items.push({ label: navLabels["home"] || "ホーム", page: "home" });
+
+    if (page === "shops") {
+        items.push({ label: navLabels["shops"] || "店舗一覧" });
+    }
+    else if (page === "shop-detail") {
+        const shop = appState.shopsData.find(s => s.id === appState.shopId);
+        items.push({ label: navLabels["shops"] || "店舗一覧", page: "shops" });
+        items.push({ label: shop ? shop.name : "詳細" });
+    }
+    else if (navLabels[page]) {
+        items.push({ label: navLabels[page] });
+    }
+
+    breadcrumb.innerHTML = items.map(item => {
+        if (item.page) {
+            return `<a href="#" onclick="app.goToPage('${item.page}'); return false;">${item.label}</a>`;
+        }
+        return `<span>${item.label}</span>`;
+    }).join("");
+},
+
+    updateActiveNav(): void {
+        document.querySelectorAll<HTMLElement>('.nav-button').forEach(btn => {
+            const page = btn.dataset.page as PageType | undefined;
+            btn.classList.toggle('active', page === appState.page);
+        });
+    },
+
+    initSlider(): void {
+        const track = document.getElementById('slider-track-home');
+        if (!track || !appState.slidesData.length) return;
+
+        track.innerHTML = appState.slidesData.map((slide: Slide) => `
+            <div class="slider-item ${slide.fullImage ? 'full-image-mode' : ''}">
+                <div class="slider-item-image">
+                    <img src="${slide.image}" alt="${slide.title}">
+                </div>
+                <div class="slider-item-content">
+                    <h3>${slide.title}</h3>
+                    <p>${slide.description || ''}</p>
+                </div>
+            </div>
+        `).join('');
+
+        const dots = document.getElementById('slider-dots');
+        if (dots) {
+            dots.innerHTML = appState.slidesData.map((_, i) => `
+                <button class="slider-dot" onclick="app.goToSlide(${i})"></button>
+            `).join('');
+        }
+
+        this.goToSlide(0);
+        this.startSliderAutoPlay();
+    },
+
+    goToSlide(index: number): void {
+        const track = document.getElementById('slider-track-home');
+        if (!track) return;
+
+        appState.currentSlideIndex = index;
+        track.style.transform = `translateX(-${index * 100}%)`;
+
+        document.querySelectorAll<HTMLElement>('.slider-dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === index);
+        });
+    },
+
+    slideNext(): void {
+        if (!appState.slidesData.length) return;
+        const next = (appState.currentSlideIndex + 1) % appState.slidesData.length;
+        this.goToSlide(next);
+    },
+
+    slidePrev(): void {
+        if (!appState.slidesData.length) return;
+        const prev = (appState.currentSlideIndex - 1 + appState.slidesData.length) % appState.slidesData.length;
+        this.goToSlide(prev);
+    },
+
+    startSliderAutoPlay(): void {
+        this.stopSliderAutoPlay();
+
+        if (appState.slidesData.length > 1) {
+            appState.autoPlayTimer = window.setInterval(() => {
+                this.slideNext();
+            }, 5000);
+        }
+    },
+
+    stopSliderAutoPlay(): void {
+        if (appState.autoPlayTimer !== null) {
+            clearInterval(appState.autoPlayTimer);
+            appState.autoPlayTimer = null;
+        }
+    },
+
+    setupEventListeners(): void {
+        document.addEventListener('click', (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+
+            const navBtn = target.closest<HTMLElement>('.nav-button, .slide-nav-button');
+            if (navBtn) {
+                const page = navBtn.dataset.page as PageType | undefined;
+                if (page) this.goToPage(page);
+                return;
+            }
+
+            const logo = target.closest('.logo');
+            if (logo) {
+                this.goToPage('home');
+                return;
+            }
+        });
+    }
+};
+
+/* ==========================================
+   6. 初期化
+   ========================================== */
+
+document.addEventListener('DOMContentLoaded', () => app.init());
+
+(window as any).goToShopDetail = (id: string) => {
+    app.goToPage('shop-detail', id);
+};

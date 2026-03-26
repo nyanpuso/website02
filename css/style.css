@@ -291,12 +291,6 @@ letter-spacing: 0.02em;
 /* ==========================================
    パンくずリスト
    ========================================== */
-.breadcrumb {
-    width: 100%;
-    max-width: var(--max-width);
-    margin: var(--spacing-md) auto 0;
-    padding: 0 var(--spacing-lg);
-}
 
 .breadcrumb-nav {
     display: flex;
