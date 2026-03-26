@@ -1,11 +1,18 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ESNext",
     "module": "ESNext",
-    "outDir": "dist",
+    /* node ではなく bundler または node16/nodenext を推奨 */
+    "moduleResolution": "bundler", 
+    "esModuleInterop": true,
     "strict": true,
-    "sourceMap": true,
+    /* 1. ソースコードの場所を明示（TS5011対策） */
+    "rootDir": "./src", 
+    /* 2. 出力先の場所 */
+    "outDir": "./dist",
+    /* 3. 古い設定に対する警告を消す（必要に応じて） */
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts"]
+  /* コンパイル対象をsrcフォルダ内に限定 */
+  "include": ["src/**/*"]
 }

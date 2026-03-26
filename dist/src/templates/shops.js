@@ -1,6 +1,5 @@
-import { appState } from '../state.js';
-
-export const shopsTemplate = (): string => `
+import { appState } from '../state';
+export const shopsTemplate = () => `
 <div class="shops-container">
     <div class="home-intro"><h1>店舗一覧</h1></div>
     <div class="shops-grid">

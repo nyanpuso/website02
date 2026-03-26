@@ -1,0 +1,20 @@
+{
+  "slides": [
+    {
+      "image": "https://picsum.photos/id/10/800/400",
+      "title": "スライド 1",
+      "description": "説明文 1",
+      "fullImage": false
+    },
+    {
+      "image": "https://picsum.photos/id/20/800/400",
+      "title": "スライド 2",
+      "description": "説明文 2",
+      "fullImage": true
+    }
+  ],
+  "shops": [
+    { "id": "shop1", "name": "サンプル店舗 A" },
+    { "id": "shop2", "name": "サンプル店舗 B" }
+  ]
+}
