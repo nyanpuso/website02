@@ -3,8 +3,7 @@ import { slider } from './slider.js';
 import { appState } from './state.js';
 
 /**
- * データのロード処理
- * data.json からスライドと店舗のデータを取得します
+ * データのロードと画像パスの自動補完
  */
 async function loadAllData() {
     try {
@@ -12,44 +11,57 @@ async function loadAllData() {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
         const data = await response.json();
-        appState.slidesData = data.slides || [];
-        appState.shopsData = data.shops || [];
-        console.log("1. データのロード完了:", appState);
+
+        // 現在のドメインを取得 (例: http://localhost:8000 や https://your-site.com)
+        const rootUrl = window.location.origin;
+
+        // --- 画像パスの自動補完ロジック ---
+        // スライドデータの変換
+        appState.slidesData = (data.slides || []).map((slide: any) => ({
+            ...slide,
+            // httpから始まらない相対パスの場合のみ、rootUrlを付与
+            image: slide.image.startsWith('http') 
+                   ? slide.image 
+                   : `${rootUrl}/${slide.image.replace(/^\//, '')}`
+        }));
+
+        // 店舗データの変換
+        appState.shopsData = (data.shops || []).map((shop: any) => ({
+            ...shop,
+            image: shop.image && !shop.image.startsWith('http')
+                   ? `${rootUrl}/${shop.image.replace(/^\//, '')}`
+                   : shop.image
+        }));
+
+        console.log("1. データロード＆パス補完完了:", appState.slidesData);
     } catch (error) {
         console.error("データの読み込みに失敗しました:", error);
-        // 失敗しても動くように最低限の空配列を保証
         appState.slidesData = [];
         appState.shopsData = [];
     }
 }
 
 /**
- * メインの初期化処理
+ * メインの初期化
  */
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("2. DOMContentLoaded: 開始");
 
-    // データのロードを待機
+    // データのロードを待ってから描画を開始する
     await loadAllData();
 
-    // 初期描画（現在の appState.page に基づく）
+    // 初期描画
     navigation.render();
-    console.log("3. 初期描画完了:", appState.page);
-
-    // ホーム画面ならスライダーを初期化
+    
     if (appState.page === 'home') {
         slider.init();
-        console.log("4. スライダー初期化完了");
     }
 
-    /**
-     * イベント委譲によるクリック管理
-     * 画面全体（document）でクリックを監視し、ターゲットを判定します
-     */
+    // イベント委譲によるクリック管理
     document.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
         
-        // --- A. ページ遷移の判定 ([data-page] を持つ要素) ---
+        // ページ遷移判定
         const navElem = target.closest('[data-page]');
         if (navElem) {
             e.preventDefault();
@@ -57,40 +69,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             const id = navElem.getAttribute('data-id');
             
             if (page) {
-                console.log("ナビゲーション実行:", page, id);
                 navigation.goToPage(page, id);
-                
-                // ページ遷移後にホームに戻ったならスライダーを再初期化
                 if (page === 'home') {
-                    // DOMが更新されるのを一瞬待ってから実行
+                    // 描画タイミングを合わせるためsetTimeoutを使用
                     setTimeout(() => slider.init(), 0);
                 }
             }
             return;
         }
 
-        // --- B. スライダー操作：次へ ---
+        // スライダー操作（次へ）
         if (target.closest('.slider-button-next')) {
-            console.log("スライダー：次へ");
             slider.slideNext();
             return;
         }
 
-        // --- C. スライダー操作：前へ ---
+        // スライダー操作（前へ）
         if (target.closest('.slider-button-prev')) {
-            console.log("スライダー：前へ");
             slider.slidePrev();
             return;
         }
 
-        // --- D. スライダー操作：ドット ---
+        // スライダー操作（ドット）
         const dot = target.closest('.slider-dot');
         if (dot) {
             const index = dot.getAttribute('data-index');
-            if (index !== null) {
-                console.log("スライダー：ドットクリック", index);
-                slider.goToSlide(parseInt(index, 10));
-            }
+            if (index !== null) slider.goToSlide(parseInt(index, 10));
             return;
         }
     });
