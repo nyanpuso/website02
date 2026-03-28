@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スライダーテスト</title>
+<!-- 既存の style.css を読み込む -->
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<section id="main-content">
+    <div id="slider-wrapper">
+
+        <div class="slider-viewport">
+            <div id="slider-track-home">
+                <div class="slider-item full-image-mode">
+                    <div class="slider-item-image">
+                        <img id="initial-slide-image" src="./slides/images/entrance.png" alt="初期画像">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="prev-btn" class="slider-button slider-btn-prev">&lt;</button>
+        <button id="next-btn" class="slider-button slider-btn-next">&gt;</button>
+
+    </div>
+</section>
+
+<script>
+let currentIndex = 0;
+const track = document.getElementById('slider-track-home');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+
+prevBtn.addEventListener('click', () => {
+    currentIndex = Math.max(currentIndex - 1, 0);
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+});
+
+nextBtn.addEventListener('click', () => {
+    currentIndex = Math.min(currentIndex + 1, 0); // 初期は1枚だけ
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+});
+</script>
+
+</body>
+</html>

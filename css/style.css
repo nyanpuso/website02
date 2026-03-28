@@ -368,58 +368,69 @@ letter-spacing: 0.02em;
     margin: 0 auto;
 }
 
-.slider-wrapper {
-    width: 100%;
-    padding: var(--spacing-md);
-    background: radial-gradient(circle at center, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-    border-radius: 16px;
-    display: flex;
-    justify-content: center;
-}
+/* ==========================================
+    スライダー
+   ========================================== */
 
-.slider {
+/* 外枠（位置基準） */
+.slider-wrapper {
     position: relative;
     width: 100%;
-    aspect-ratio: 21 / 9; /* 横長の比率を維持 */
-    min-height: 300px;
-    overflow: hidden;
+    aspect-ratio: 21 / 9; /* ← これ追加 */
     border-radius: 12px;
+    overflow: hidden;
     background-color: white;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-.slider-track {
-    display: flex;
+/* 表示領域（マスク） */
+.slider-viewport {
     width: 100%;
     height: 100%;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
 
+/* スライド全体（動く部分） */
+#slider-track-home {
+    display: flex;
+    height: 100%;
+    transition: transform 0.5s ease;
+}
+
+/* 各スライド */
 .slider-item {
     flex: 0 0 100%;
     display: flex;
     height: 100%;
 }
 
+/* 画像エリア */
 .slider-item-image {
-    flex: 1; /* 割合で分割 */
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 50%, #ffd89b 100%);
+    flex: 1;
     position: relative;
 }
 
+/* 画像 */
 .slider-item-image img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* 画像全体を綺麗に収める */
+    object-fit: contain;
 }
 
+/* テキスト */
 .slider-item-content {
-    flex: 1; /* 割合で分割 */
+    flex: 1;
     padding: var(--spacing-xl);
     display: flex;
     flex-direction: column;
     justify-content: center;
     background: #fafafa;
+}
+
+#initial-slide-image {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .slider-item-content h3 {
@@ -463,18 +474,20 @@ letter-spacing: 0.02em;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: clamp(36px, 4vw, 48px);
-    aspect-ratio: 1; /* 正方形を維持 */
-    background-color: rgba(255, 255, 255, 0.9);
-    border: none;
+    
+    width: 40px;
+    height: 40px;
+
     border-radius: 50%;
-    cursor: pointer;
-    z-index: 10;
+    background: rgba(255,255,255,0.9);
+    border: none;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: var(--transition);
+
+    cursor: pointer;
+    z-index: 10;
 }
 
 .slider-button:hover {
@@ -482,8 +495,8 @@ letter-spacing: 0.02em;
     transform: translateY(-50%) scale(1.1);
 }
 
-.slider-button-prev { left: var(--spacing-md); }
-.slider-button-next { right: var(--spacing-md); }
+.slider-btn-prev { left: var(--spacing-md); }
+.slider-btn-next { right: var(--spacing-md); }
 
 .slider-dots {
     position: absolute;
@@ -737,6 +750,14 @@ letter-spacing: 0.02em;
 
     .slider-item {
         flex-direction: column;
+    }
+
+    .slider-viewport {
+        aspect-ratio: auto;
+    }
+
+    .slider-item-image {
+        aspect-ratio: 16 / 9;
     }
 
     .slider-item-image {

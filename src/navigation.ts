@@ -1,100 +1,49 @@
-import { appState, PAGE_CONFIG } from './state.js';
-import { dom } from './dom.js';
-import { homeTemplate } from './templates/home.js';
-import { Shop } from './types.js';
-import { shopsTemplate } from './templates/shops.js';
-import { shopDetailTemplate } from './templates/shopDetail.js';
-import { mapTemplate } from './templates/map.js';
-import { PageConfig } from './types.js';
+import { appState } from './state.js';
+import { slider } from './slider.js';
+import { shops } from './shops.js';
+
+type PageType = 'home' | 'shops';
+
+const routes: Record<PageType, any> = {
+    home: slider,
+    shops: shops,
+};
 
 export const navigation = {
-    render(): void {
-        const content = dom.getContent();
-        if (!content) return;
 
-        if (appState.page === 'home') content.innerHTML = homeTemplate();
-        else if (appState.page === 'shops') content.innerHTML = shopsTemplate();
-        else if (appState.page === 'shop-detail') content.innerHTML = shopDetailTemplate(appState.shopId);
-        else if (appState.page === 'map') content.innerHTML = mapTemplate();
 
-        this.updateBreadcrumb();
-        console.log("Render直後の DOM チェック:", document.getElementById('main-content')?.innerHTML.substring(0, 100));
-    },
+    goToPage(page: PageType) {
+if (window.monitor) {
+    window.monitor.pause();
+}else{window.dbgLog?.('monitor not found'); }
 
-    goToPage(page: string, id: string | null = null) {
-        appState.page = page as any;
-        appState.shopId = id;
-        this.render();
-        window.scrollTo(0, 0);
-    },
+console.log('goToPage:', page);
+        appState.page = page;
 
-updateBreadcrumb(): void {
-        const breadcrumb = dom.getBreadcrumb();
-        if (!breadcrumb) return;
-
-        const { page, shopId, shopsData } = appState;
-        const steps = [];
-        
-        // 【修正ポイント1】 currentKey の型を string | undefined ではなく PageType | undefined にする
-        let currentKey: string | undefined = page;
-        
-        while (currentKey) {
-            const rawConfig = (PAGE_CONFIG as any)[currentKey];
-            // 2. config が存在しない（親がもういない）場合はループを抜ける
-            if (!rawConfig) break;
-
-            // 3. 型を明示的に指定して代入する（これで TS7022 が消えます）
-            const config: PageConfig = rawConfig;
-
-            let name = config.label;
-
-            if (currentKey === 'shop-detail') {
-                const shop = shopsData.find((s: Shop) => s.id === shopId);
-                if (shop) name = shop.name;
-            }
-
-            steps.unshift({
-                name: name,
-                url: `${location.origin}/#${currentKey}`,
-                key: currentKey
-            });
-
-            // 親階層へ移動
-            currentKey = config.parent;
+        const route = routes[page];
+        if (route) {
+            route.render();
         }
-
-        // JSON-LDの注入
-        this.injectJsonLd(steps);
-
-        // HTMLの描画
-        breadcrumb.innerHTML = steps.map((step, i) => {
-            const isLast = i === steps.length - 1;
-            if (isLast) {
-                return `<span class="breadcrumb-current">${step.name}</span>`;
-            }
-            return `<a href="#" data-page="${step.key}">${step.name}</a>`;
-        }).join('<span class="separator"> &gt; </span>');
     },
 
-    injectJsonLd(steps: any[]): void {
-        const jsonLd = {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": steps.map((step, i) => ({
-                "@type": "ListItem",
-                "position": i + 1,
-                "name": step.name,
-                "item": step.url
-            }))
-        };
+    init() {
+        document.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            const nav = target.closest('[data-page]') as HTMLElement;
 
-        let script = document.getElementById('breadcrumb-jsonld') as HTMLScriptElement | null;
-        if (!script) {
-            script = document.createElement('script');
-            script.id = 'breadcrumb-jsonld';
-            script.type = 'application/ld+json';
-            document.head.appendChild(script);
-        }
-        script.textContent = JSON.stringify(jsonLd, null, 2);
+            if (!nav) return;
+
+            e.preventDefault();
+            const page = nav.getAttribute('data-page') as PageType;
+            if (page) this.goToPage(page);
+
+            // ページ切り替え後に slider が必要ならここで init を呼ぶことも可能
+            if (page === 'home') {
+                slider.init();
+            }
+if (window.monitor) {
+    window.monitor.pause();
+}else{window.dbgLog?.('monitor not found'); }
+        });
     }
 };

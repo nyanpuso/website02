@@ -19,13 +19,13 @@
       "fullImage": false
     },
     {
-      "image": "shops/images/maekawa.jpg",
+      "image": "shops/images/maekawa.png",
       "title": "美と健康のまえかわ",
       "description": "各種おくすりを取り揃えています。<br>年中無休で営業中。",
       "fullImage": false
     },
     {
-      "image": "shops/images/witch.jpg",
+      "image": "shops/images/witch.png",
       "title": "ヘアースタジオwitch",
       "description": "女性スタッフが丁寧に対応いたします。<br>着物の着付けもできます。",
       "fullImage": false
@@ -37,8 +37,51 @@
       "fullImage": false
     }
   ],
-  "shops": [
-    { "id": "maekawa", "name": "美と健康のまえかわ" },
-    { "id": "witch", "name": "ヘアースタジオwitch" }
-  ]
+"shops": [
+    {
+      "id": "maekawa",
+      "name": "美と健康のまえかわ",
+      "description": "各種おくすりを取り揃えています。",
+      "image": "https://via.placeholder.com/200",
+      "area": "maekawa_area"
+    },
+    {
+      "id": "witch",
+      "name": "ヘアースタジオwitch",
+      "description": "女性スタッフが丁寧に対応。",
+      "image": "https://via.placeholder.com/200",
+      "area": "witch_area"
+    }
+  ],
+
+    "areas": {
+        "maekawa_area": {
+            "type": "rect",
+            "x": 2,
+            "y": 3,
+            "w": 2,
+            "h": 2
+        },
+        "witch_area": {
+            "type": "cells",
+            "cells": [
+            { "x": 7, "y": 2 },
+            { "x": 8, "y": 2 }
+            ]
+        }
+    },
+    "events": [
+  {
+    "id": "event1",
+    "title": "春の特売セール",
+    "description": "全品20%OFF",
+    "area": "maekawa_area"
+  },
+  {
+    "id": "event2",
+    "title": "体験イベント",
+    "description": "カイロプラクティック",
+    "area": "witch_area"
+  }
+]
 }

@@ -14,7 +14,7 @@ export const appState: AppState = {
   page: 'home',
   shopId: null,
   currentSlideIndex: 0,
-  shopsData: [],
-  slidesData: [],
+  shopsData: [] as any[],
+  slidesData: [] as any[],
   autoPlayTimer: null
 };

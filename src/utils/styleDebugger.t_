@@ -1,0 +1,91 @@
+export function createStyleDebugger(
+  targetSelector: string | HTMLElement,
+  properties: string[] = [
+    'display', 'visibility', 'opacity',
+    'width', 'height',
+    'position', 'top', 'left', 'right', 'bottom',
+    'z-index', 'overflow'
+  ]
+) {
+  const target: HTMLElement | null = 
+    typeof targetSelector === 'string'
+      ? document.querySelector<HTMLElement>(targetSelector)
+      : targetSelector;
+
+  if (!target) {
+    console.warn('createStyleDebugger: 対象要素が見つかりません', targetSelector);
+    return null;
+  }
+
+  // デバッグパネル作成
+  const panel = document.createElement('div');
+  panel.style.position = 'fixed';
+  panel.style.top = '10px';
+  panel.style.right = '10px';
+  panel.style.background = 'rgba(0,0,0,0.7)';
+  panel.style.color = '#fff';
+  panel.style.fontSize = '12px';
+  panel.style.padding = '10px';
+  panel.style.borderRadius = '4px';
+  panel.style.zIndex = '9999';
+  panel.style.maxWidth = '300px';
+  panel.style.fontFamily = 'monospace';
+  panel.style.whiteSpace = 'pre';
+  document.body.appendChild(panel);
+
+  function updatePanel() {
+    if (!target) return;  // nullチェックを追加
+    const styles = getComputedStyle(target);
+    let output = `Element: ${target.tagName}${target.id ? '#' + target.id : ''}\n`;
+    properties.forEach(prop => {
+      output += `${prop}: ${styles.getPropertyValue(prop)}\n`;
+    });
+    panel.textContent = output;
+  }
+
+  // 初期更新
+  updatePanel();
+
+  // MutationObserver は target が null でないことを確定
+  const observer = new MutationObserver(() => updatePanel());
+  observer.observe(target, { attributes: true, attributeFilter: ['style', 'class'] });
+
+  window.addEventListener('resize', updatePanel);
+
+  return {
+    update: updatePanel,
+    destroy: () => {
+      observer.disconnect();
+      panel.remove();
+      window.removeEventListener('resize', updatePanel);
+    }
+  };
+}
+
+export function createStyleDebuggerWhenReady(
+    selector: string,
+    props: string[] = ['display', 'visibility', 'opacity', 'width', 'height', 'z-index']
+) {
+    let panel: any = null;
+
+    const observer = new MutationObserver(() => {
+        const el = document.querySelector<HTMLElement>(selector);
+        if (el) {
+            const style = getComputedStyle(el);
+            if (style.display !== 'none' && style.visibility !== 'hidden') {
+                // スタイルが有効になったのでデバッグパネル作成
+                panel = createStyleDebugger(selector, props);
+                observer.disconnect(); // 監視終了
+            }
+        }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return {
+        destroy: () => {
+            panel?.destroy?.();
+            observer.disconnect();
+        }
+    };
+}
