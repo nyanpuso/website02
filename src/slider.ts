@@ -1,126 +1,100 @@
 import { appState } from './state.js';
 import { loadSlidesData } from './data.js';
+
+// currentIndex は export せず、このファイル内でのみ管理
 let currentIndex = 0;
 
 export const slider = {
-
-    // DOM作成のみ
-    render() {
-console.log('slider.render called');
+    render(): void {
         const main = document.getElementById('main-content');
         if (!main) return;
 
+        // 1. 静的プレースホルダーを配置（CSSクラスは共通）
         main.innerHTML = `
-        <div id="slider-wrapper">
-
+        <div id="slider-wrapper" class="slider-wrapper">
             <div class="slider-viewport">
-                <div id="slider-track-home">
-                    <div class="slider-item full-image-mode">
-                        <div class="slider-item-image">
-                            <img id="initial-slide-image" alt="">
-                        </div>
-                        <div class="slider-item-content"></div>
+                <div id="static-first-slide" class="slider-item full-image-mode">
+                    <div class="slider-item-image">
+                        <img id="initial-slide-image" alt="メイン画像" 
+                             style="visibility: hidden; opacity: 0; transition: opacity 0.3s;">
                     </div>
                 </div>
             </div>
-
-            <button id="next-btn" class="slider-button slider-btn-next">></button>
-            <button id="prev-btn" class="slider-button slider-btn-prev"><</button>
-            <div id="slider-dots" class="slider-dots"></div>
-
-        
         </div>
         `;
 
+        // TypeScript型キャスト: HTMLElement ではなく HTMLImageElement として扱う
+        const img = document.getElementById('initial-slide-image') as HTMLImageElement | null;
+        
+        if (img) {
+            img.onload = () => {
+                img.style.visibility = 'visible';
+                img.style.opacity = '1';
+            };
+            img.src = './slides/images/entrance.png';
+        }
 
-const img = document.getElementById('initial-slide-image') as HTMLImageElement | null;
-console.log('initial-slide-image:', img);
-if (img) {
-    img.src = './slides/images/entrance.png';
-    console.log('画像 src を設定しました:', img.src);
-} else {
-    console.warn('1枚目の画像要素が見つかりません');
-}
-
-        // まず1枚目だけ表示
-        // const img = document.getElementById('initial-slide-image') as HTMLImageElement | null;
-        // if (img) {
-        //     img.src = './slides/images/entrance.png'; // 仮
-        // }
-
-        // データ読み込み後に init() 呼び出し
+        // 2. データのロード後に init を実行
         loadSlidesData().then(() => this.init());
-
-    // データ読み込み後にスライド表示
-// データ読み込み後にスライド表示
-const wrapper = document.getElementById('slider-wrapper');
-if (wrapper) wrapper.style.display = 'block';
-
-const viewport = wrapper?.querySelector('.slider-viewport') as HTMLElement | null;
-if (viewport) viewport.style.visibility = 'visible';
-
-const initialImg = document.getElementById('initial-slide-image') as HTMLImageElement | null;
-if (initialImg) initialImg.style.visibility = 'visible';
-
-console.log('loadSlidesData resolved, calling init');
     },
 
+    init(): void {
+        const wrapper = document.getElementById('slider-wrapper');
+        const viewport = wrapper?.querySelector('.slider-viewport');
+        // 型ガード
+        if (!wrapper || !viewport) return;
 
-    // スライド生成・イベント登録
-    init() {
-        const track = document.getElementById('slider-track-home');
-console.log('slider-track-home:', track);
-        if (!track) return;
+        const track = document.createElement('div');
+        track.id = 'slider-track-home';
 
-console.log('slider.init');
+        // slide と index に型を指定（型エラー 7006 の解消）
+        appState.slidesData.forEach((slide: any, index: number) => {
+            const item = document.createElement('div');
+            item.className = `slider-item ${slide.fullImage ? 'full-image-mode' : ''}`;
+            item.innerHTML = `
+                <div class="slider-item-image">
+                    <img src="${slide.image}" alt="${slide.title}">
+                </div>
+                <div class="slider-item-content">
+                    <h3>${slide.title}</h3>
+                    <p>${slide.description || ''}</p>
+                </div>
+            `;
+            track.appendChild(item);
+        });
 
-        // 既存1枚目を保持
-        const first = track.querySelector('.slider-item');
-        if (!first) return;
-console.log('1枚目のスライド:', first);
-// 2枚目以降を追加
-appState.slidesData.slice(1).forEach(slide => {
-    const item = document.createElement('div');
-    item.className = `slider-item ${slide.fullImage ? 'full-image-mode' : ''}`;
-    item.innerHTML = `
-        <div class="slider-item-image">
-            <img src="${slide.image}" alt="${slide.title}">
-        </div>
-        <div class="slider-item-content">
-            <h3>${slide.title}</h3>
-            <p>${slide.description || ''}</p>
-        </div>
-    `;
-    track.appendChild(item);
-});
+        viewport.innerHTML = ''; 
+        viewport.appendChild(track);
 
-        // prev / next ボタンイベント（1回だけ登録）
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
+        // ボタンの追加（スライダーが準備できてから）
+        wrapper.insertAdjacentHTML('beforeend', `
+            <button id="next-btn" class="slider-button slider-btn-next">></button>
+            <button id="prev-btn" class="slider-button slider-btn-prev"><</button>
+            <div id="slider-dots" class="slider-dots"></div>
+        `);
 
-        prevBtn?.addEventListener('click', () => this.prev());
-        nextBtn?.addEventListener('click', () => this.next());
+        document.getElementById('prev-btn')?.addEventListener('click', () => this.prev());
+        document.getElementById('next-btn')?.addEventListener('click', () => this.next());
 
-        // 初期位置設定
         this.update();
     },
 
-    prev() {
+    prev(): void {
         const len = appState.slidesData.length;
         currentIndex = (currentIndex - 1 + len) % len;
         this.update();
     },
 
-    next() {
+    next(): void {
         const len = appState.slidesData.length;
         currentIndex = (currentIndex + 1) % len;
         this.update();
     },
 
-    update() {
+    update(): void {
         const track = document.getElementById('slider-track-home');
-        if (!track) return;
-
-        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        if (track) {
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
     }
 };
