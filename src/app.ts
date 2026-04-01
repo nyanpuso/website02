@@ -1,20 +1,20 @@
 import { navigation } from './navigation.js';
-import { debugTargets } from './utils/style-debugger-config.js';
-import { StyleMonitor } from './utils/styleMonitor.js';
-import { StyleDebuggerUI } from './utils/styleDebuggerUI.js';
+// import { debugTargets } from './utils/style-debugger-config.js';
+// import { StyleMonitor } from './utils/styleMonitor.js';
+//import { StyleDebuggerUI } from './utils/styleDebuggerUI.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const monitor = new StyleMonitor(debugTargets);
-    window.monitor = monitor; // グローバルに公開
-    const ui = new StyleDebuggerUI();
+    // const monitor = new StyleMonitor(debugTargets);
+    // window.monitor = monitor; // グローバルに公開
+    // const ui = new StyleDebuggerUI();
 
-    monitor.addEventListener('change', (e: Event) => {
-        const evt = e as CustomEvent<any>;
-        ui.displayChange(evt.detail.key, evt.detail.value, evt.detail.changed);
-        ui.logChange(evt.detail.key, evt.detail.value, evt.detail.logMode);
-    });
+    // monitor.addEventListener('change', (e: Event) => {
+    //     const evt = e as CustomEvent<any>;
+    //     ui.displayChange(evt.detail.key, evt.detail.value, evt.detail.changed);
+    //     ui.logChange(evt.detail.key, evt.detail.value, evt.detail.logMode);
+    // });
 
-    monitor.start();
+    // monitor.start();
 
 //ブレイクポイントは monitor.pause() / monitor.resume() で制御可能
 
@@ -28,14 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // ① ナビのクリックイベント登録
     navigation.init();
 
-monitor.pause(); //
+//monitor.pause(); //
 
     // ② 初期ページ表示（home）
     navigation.goToPage('home');
 
 
-    // 外部JS例
-    window['dbgLog'] = (msg: string) => ui.externalLog(msg);
+//    // 外部JS例
+//    window['dbgLog'] = (msg: string) => ui.externalLog(msg);
 
 // 外部JSから呼べるログ関数を提供
 // <script>
