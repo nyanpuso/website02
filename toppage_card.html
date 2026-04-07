@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>大潟ショッピングセンター - Card Collection</title>
+    <style>
+        :root {
+            /* PC用：迫力のあるサイズ */
+            --card-width: 220px;
+            --card-height: 330px;
+            --card-offset-y: 80px; 
+            --origin-y: 500px; 
+            --transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+            --r1: -15deg; --r2: -5deg; --r3: 5deg; --r4: 15deg;
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                /* モバイル用：画面幅に基づいた黄金比に近いサイズに修正 */
+                --card-width: 28vw;
+                --card-height: 42vw; /* 幅に対して約1.5倍の高さで形状を維持 */
+                --card-offset-y: 50px; 
+                --origin-y: 300px; 
+            }
+            .main-container { flex-direction: column !important; }
+            
+            .brand-section { 
+                flex: 0 0 60% !important; 
+                padding: 10px 10px 0 10px !important; 
+            }
+            
+            .gallery-section { 
+                flex: 0 0 40% !important; 
+                align-items: flex-start !important; 
+                overflow: visible !important;
+                background: #f4f4f4 !important;
+            }
+
+            .card-deck {
+                /* 扇の上部を配置エリアに極限まで寄せる */
+                margin-top: -45px;
+                transform: translateY(var(--card-offset-y)) !important;
+            }
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+            -webkit-user-drag: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body { font-family: sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; background: #fff; }
+        .main-container { flex: 1; display: flex; min-height: 0; height: 100%; position: relative; }
+
+        /* スロットエリア */
+        .brand-section { 
+            flex: 1; display: grid; grid-template-columns: repeat(2, 1fr); 
+            grid-template-rows: min-content 1fr 1fr; gap: 10px; padding: 25px; 
+            background: #fff; position: relative; z-index: 10;
+        }
+        .brand-logo { grid-column: 1 / -1; font-size: 1.1rem; border-bottom: 2px solid #d4af37; padding-bottom: 5px; margin-bottom: 5px; }
+        .card-slot { border: 2px dashed #ddd; border-radius: 10px; position: relative; overflow: hidden; background: #fafafa; }
+
+        /* 手札エリア（前面） */
+        .gallery-section { 
+            flex: 1.2; background: #f4f4f4; display: flex; align-items: flex-end; 
+            justify-content: center; position: relative; z-index: 100; overflow: visible; 
+        }
+        .card-deck { 
+            position: relative; width: 100%; height: var(--card-height); 
+            display: flex; justify-content: center; transform: translateY(var(--card-offset-y)); 
+        }
+
+        .photo-item {
+            position: absolute; width: var(--card-width); height: var(--card-height);
+            background: #fff; border: 4px solid #fff; border-radius: 10px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.12); cursor: pointer;
+            transition: transform var(--transition), opacity 0.3s;
+            transform-origin: center var(--origin-y);
+            z-index: var(--z); transform: rotate(var(--r));
+            pointer-events: auto;
+        }
+        .photo-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; display: block; pointer-events: none; }
+
+        /* アニメーション：上に飛んで消える */
+        .photo-item.drawing {
+            z-index: 999 !important;
+            transform: translateY(-1300px) rotate(0deg) scale(0.4) !important;
+            opacity: 0;
+            transition: transform 0.9s ease-in, opacity 0.4s !important;
+            pointer-events: none;
+        }
+
+        /* アニメーション：配置 */
+        .photo-item.placed { 
+            position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; 
+            transform: none !important; border: none; box-shadow: none; border-radius: 0;
+            animation: mist-to-clear 3s ease-out forwards;
+            pointer-events: none;
+            z-index: 1; 
+        }
+        @keyframes mist-to-clear {
+            0% { filter: blur(20px); opacity: 0; transform: scale(1.1); }
+            40% { opacity: 0.3; }
+            100% { filter: blur(0px); opacity: 1; transform: scale(1); }
+        }
+
+        /* 初期配置・回避 */
+        .item-1 { --z: 4; --r: var(--r1); }
+        .item-2 { --z: 3; --r: var(--r2); }
+        .item-3 { --z: 2; --r: var(--r3); }
+        .item-4 { --z: 1; --r: var(--r4); }
+
+        .item-1:hover ~ .item-2 { --r: 12deg; }
+        .item-1:hover ~ .item-3 { --r: 24deg; }
+        .item-1:hover ~ .item-4 { --r: 36deg; }
+        .card-deck:has(.item-2:hover) .item-1 { --r: -35deg; }
+        .item-2:hover ~ .item-3 { --r: 24deg; }
+        .item-2:hover ~ .item-4 { --r: 36deg; }
+        .card-deck:has(.item-3:hover) .item-1 { --r: -40deg; }
+        .card-deck:has(.item-3:hover) .item-2 { --r: -28deg; }
+        .item-3:hover ~ .item-4 { --r: 36deg; }
+        .card-deck:has(.item-4:hover) .item-1 { --r: -45deg; }
+        .card-deck:has(.item-4:hover) .item-2 { --r: -33deg; }
+        .card-deck:has(.item-4:hover) .item-3 { --r: -21deg; }
+    </style>
+</head>
+<body>
+
+<main class="main-container">
+    <section class="brand-section">
+        <h1 class="brand-logo">大潟ショッピングセンター</h1>
+        <div class="card-slot" id="slot-0"></div>
+        <div class="card-slot" id="slot-1"></div>
+        <div class="card-slot" id="slot-2"></div>
+        <div class="card-slot" id="slot-3"></div>
+    </section>
+    
+    <section class="gallery-section">
+        <div class="card-deck">
+            <div class="photo-item item-1"><img src="https://picsum.photos/id/225/800/1200" draggable="false"></div>
+            <div class="photo-item item-2"><img src="https://picsum.photos/id/30/800/1200" draggable="false"></div>
+            <div class="photo-item item-3"><img src="https://picsum.photos/id/429/800/1200" draggable="false"></div>
+            <div class="photo-item item-4"><img src="https://picsum.photos/id/678/800/1200" draggable="false"></div>
+        </div>
+    </section>
+</main>
+
+<script>
+    let count = 0;
+    document.querySelectorAll('.photo-item').forEach(card => {
+        card.addEventListener('click', function() {
+            if (this.classList.contains('placed') || this.classList.contains('drawing') || count >= 4) return;
+            this.classList.add('drawing');
+            setTimeout(() => {
+                const slot = document.getElementById(`slot-${count}`);
+                this.classList.remove('drawing');
+                this.classList.add('placed');
+                slot.appendChild(this);
+                count++;
+            }, 800);
+        });
+    });
+</script>
+</body>
+</html>

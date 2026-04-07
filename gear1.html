@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+  :root {
+    --gear-color: #efefef; /* 2次元平面的なグレー */
+    --stroke-color: #333333; /* 縁取りの線 */
+    --base-speed: 24s;
+    --m: 10; /* モジュール（歯の大きさの規格） */
+  }
+
+  body {
+    background: #fff; margin: 0;
+    display: flex; justify-content: center; align-items: center;
+    height: 100vh; overflow: hidden;
+  }
+
+  .stage {
+    position: relative;
+    width: 1000px; height: 600px;
+  }
+
+  .gear {
+    position: absolute;
+    display: flex; justify-content: center; align-items: center;
+    transform-origin: center;
+  }
+
+  /* 2次元の「歯（長方形）」 */
+  .tooth {
+    position: absolute;
+    background: var(--gear-color);
+    border: 1.5px solid var(--stroke-color);
+    border-top: none; border-bottom: none; /* 重なりを消す */
+    box-sizing: border-box;
+    width: 14px; /* 歯の厚み（平面） */
+  }
+
+  /* 2次元の「円盤」を歯底円まで縮小 */
+  .gear-body {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--gear-color);
+    border: 1.5px solid var(--stroke-color);
+    z-index: 2; /* 歯の上に重ねて根元を隠す */
+    display: flex; justify-content: center; align-items: center;
+  }
+
+  /* 中央の穴 */
+  .hole {
+    width: 60%; height: 60%;
+    border-radius: 50%;
+    border: 1.2px solid var(--stroke-color);
+    background: white;
+    z-index: 3;
+  }
+
+  @keyframes rotate-cw { from { transform: rotate(var(--start, 0deg)); } to { transform: rotate(calc(var(--start, 0deg) + 360deg)); } }
+  @keyframes rotate-ccw { from { transform: rotate(var(--start, 0deg)); } to { transform: rotate(calc(var(--start, 0deg) - 360deg)); } }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+  </div>
+
+<script>
+  const m = 10; // モジュール
+  const baseSpeed = 24; // 基準速度(秒)
+
+  const gearData = [
+    { id: 'g1', z: 36, x: 200, y: 350, dir: 'cw' },
+    { id: 'g2', z: 24, x: 200 + (36+24)*m/2 * Math.cos(-Math.PI/3), y: 350 + (36+24)*m/2 * Math.sin(-Math.PI/3), dir: 'ccw' },
+    { id: 'g3', z: 36, x: 0, y: 0, parentIdx: 1, angle: Math.PI/6, dir: 'cw' },
+    { id: 'g4', z: 12, x: 0, y: 0, parentIdx: 2, angle: -Math.PI/4, dir: 'ccw' }
+  ];
+
+  // 相対座標を計算（中心距離は維持）
+  gearData[2].x = gearData[1].x + (24+36)*m/2 * Math.cos(gearData[2].angle);
+  gearData[2].y = gearData[1].y + (24+36)*m/2 * Math.sin(gearData[2].angle);
+  gearData[3].x = gearData[2].x + (36+12)*m/2 * Math.cos(gearData[3].angle);
+  gearData[3].y = gearData[2].y + (36+12)*m/2 * Math.sin(gearData[3].angle);
+
+  function createGear(data) {
+    const container = document.getElementById('stage');
+    const gear = document.createElement('div');
+    const d_pitch = data.z * m; // ピッチ円直径（計算用）
+    const h_tooth = m * 2.25; // 歯の全高（2次元平面での飛び出し量）
+    
+    gear.className = 'gear';
+    gear.style.width = (d_pitch + h_tooth) + 'px'; // 歯先まで含めた全体サイズ
+    gear.style.height = (d_pitch + h_tooth) + 'px';
+    gear.style.left = (data.x - (d_pitch + h_tooth)/2) + 'px';
+    gear.style.top = (data.y - (d_pitch + h_tooth)/2) + 'px';
+    
+    const duration = baseSpeed * (data.z / 36);
+    const startAngle = (data.dir === 'ccw') ? (180 / data.z) : 0; // 噛み合わせオフセット
+    gear.style.setProperty('--start', startAngle + 'deg');
+    gear.style.animation = `rotate-${data.dir} ${duration}s linear infinite`;
+
+    // 歯の生成
+    for (let i = 0; i < data.z / 2; i++) {
+      const tooth = document.createElement('div');
+      tooth.className = 'tooth';
+      // 長方形を中央に配置し、円盤から飛び出させる
+      tooth.style.width = (d_pitch/data.z * 1.4) + 'px'; // 歯の厚みを平面幾何学的に調整
+      tooth.style.height = (d_pitch + h_tooth*0.95) + 'px'; // 2次元平面での歯の全高
+      tooth.style.transform = `rotate(${(360 / data.z) * i}deg)`;
+      gear.appendChild(tooth);
+    }
+
+    // ボディ（ここを縮小）
+    const body = document.createElement('div');
+    body.className = 'gear-body';
+    const d_root = d_pitch - m * 1.5; // 歯底円（歯の根元）の直径
+    body.style.width = d_root + 'px';
+    body.style.height = d_root + 'px';
+    body.innerHTML = '<div class="hole"></div>';
+    gear.appendChild(body);
+    
+    container.appendChild(gear);
+  }
+
+  gearData.forEach(createGear);
+</script>
+
+</body>
+</html>

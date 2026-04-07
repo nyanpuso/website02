@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Scroll Snap Sample</title>
+    <style>
+        /* 全体のスクロールバーを非表示にする（任意） */
+        body {
+            margin: 0;
+            overflow: hidden; /* ブラウザ標準のスクロールを制御 */
+        }
+
+        /* スナップのコンテナ */
+        .container {
+            width: 100%;
+            height: 100vh;
+            overflow-y: scroll; /* 縦方向のスクロールを有効に */
+            scroll-snap-type: y mandatory; /* Y軸方向に強制的にスナップ */
+            scroll-behavior: smooth;
+        }
+
+        /* 各セクションの設定 */
+        .section {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            color: white;
+            scroll-snap-align: start; /* セクションの先頭でピタッと止まる */
+        }
+
+        /* 背景色の塗り分け */
+        .section:nth-child(1) { background-color: #ff6b6b; }
+        .section:nth-child(2) { background-color: #4ecdc4; }
+        .section:nth-child(3) { background-color: #45b7d1; }
+        .section:nth-child(4) { background-color: #96ceb4; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <section class="section">PAGE 01</section>
+    <section class="section">PAGE 02</section>
+    <section class="section">PAGE 03</section>
+    <section class="section">PAGE 04</section>
+</div>
+
+</body>
+</html>

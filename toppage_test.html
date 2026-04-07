@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>配置済み状態</title>
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- 全体 --- */
+.main-container {
+    flex: 1;
+    display: flex;
+}
+
+/* --- 左エリア --- */
+.brand-section {
+    flex: 1.2;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+
+    padding: 80px 30px 30px;
+    position: relative;
+}
+
+/* ロゴ */
+.brand-logo {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+}
+
+/* スロット */
+.card-slot {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: 1px dashed #ccc;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* カード（配置済み） */
+.photo-item {
+    position: absolute;
+    inset: 0; /* ←これが重要（完全フィット） */
+
+    border: 8px solid #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* 画像 */
+.photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* フッター */
+.footer {
+    height: 80px;
+    background: #333;
+}
+</style>
+</head>
+
+<body>
+
+<div class="main-container">
+    <div class="brand-section">
+        <h1 class="brand-logo">大潟ショッピングセンター</h1>
+
+        <div class="card-slot">
+            <div class="photo-item">
+                <img src="https://picsum.photos/id/225/800/1200">
+            </div>
+        </div>
+
+        <div class="card-slot">
+            <div class="photo-item">
+                <img src="https://picsum.photos/id/30/800/1200">
+            </div>
+        </div>
+
+        <div class="card-slot">
+            <div class="photo-item">
+                <img src="https://picsum.photos/id/429/800/1200">
+            </div>
+        </div>
+
+        <div class="card-slot">
+            <div class="photo-item">
+                <img src="https://picsum.photos/id/678/800/1200">
+            </div>
+        </div>
+
+    </div>
+
+    <div style="flex:1; background:#f5f5f5;"></div>
+</div>
+
+<div class="footer"></div>
+
+</body>
+</html>

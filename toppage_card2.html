@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大潟ショッピングセンター - Joetsu, Niigata</title>
+    <style>
+        /* --- リセット CSS & 基本設定 --- */
+        :root {
+            --bg-color: #ffffff;
+            --text-main: #333333;
+            --accent-color: #d4af37;
+            --font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            --card-w: 240px; /* カードの幅 */
+            --card-h: 360px; /* カードの高さ */
+            --deck-hide-h: 120px; /* デッキ全体が下にはみ出す量 (高さの1/3) */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .brand-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .brand-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.15rem;
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+        }
+
+        /* --- 右側：カードデッキギャラリー (手札イメージ) --- */
+        .gallery-section {
+            flex: 2;
+            position: relative;
+            background-color: #f9f9f9;
+            /* 【重要】カードが下にはみ出すためoverflowをvisibleに */
+            overflow: visible; 
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; /* 下端揃え */
+        }
+
+        /* デッキコンテナ (扇形全体) */
+        .card-deck {
+            position: absolute;
+            width: var(--card-w);
+            height: var(--card-h);
+            /* 【重要】画面下端から高サの1/3分だけ下に配置 */
+            bottom: calc(-1 * var(--deck-hide-h));
+            /* 中央配置の補正 */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* 背景オーバーレイ */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease;
+            z-index: 100;
+        }
+        body.has-drawn-card .overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- カードの基本設定 (デッキ内) --- */
+        .photo-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            border: 8px solid #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            overflow: hidden;
+            cursor: pointer;
+            /* 扇形の中心 */
+            transform-origin: bottom center;
+            
+            --base-rot: 0deg;
+            --spread: 0deg;
+            --pull-y: 0px;
+            --scale: 1;
+
+            transform: translateY(var(--pull-y)) rotate(calc(var(--base-rot) + var(--spread))) scale(var(--scale));
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+        }
+
+        /* 初期配置 */
+        .item-1 { --base-rot: -15deg; z-index: 1; }
+        .item-2 { --base-rot: -5deg;  z-index: 2; }
+        .item-3 { --base-rot: 5deg;   z-index: 3; }
+        .item-4 { --base-rot: 15deg;  z-index: 4; }
+
+        /* ホバーアクション */
+        .card-deck:hover .photo-item:not(.drawn) { --spread: -15deg; }
+        /* 【重要】手元にあるため、浮き上がる量を少し減らして存在感を出す */
+        .card-deck:hover .photo-item:hover:not(.drawn) { --spread: 0deg; --pull-y: -40px; }
+        .card-deck:hover .photo-item:hover ~ .photo-item:not(.drawn) { --spread: 15deg; }
+
+        /* --- カードを抜き取るアニメーション --- */
+        .photo-item.drawn {
+            z-index: 1000 !important;
+            cursor: zoom-out;
+            animation: draw-exit-and-drop 1.0s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+        }
+
+        @keyframes draw-exit-and-drop {
+            0% {
+                /* 手元の隠れた位置からスタート */
+                transform: translateY(calc(1 * var(--deck-hide-h))) rotate(var(--base-rot)) scale(1);
+            }
+            /* 1. 抜き取り：一気に画面の上端より外へ消える */
+            35% {
+                transform: translateY(-120vh) rotate(0deg) scale(1);
+            }
+            /* 2. 準備：画面外（上）でサイズを1.3倍にして待機 */
+            36% {
+                transform: translateY(-120vh) rotate(0deg) scale(1.3);
+            }
+            /* 3. 落下：デッキの少し上の位置（-120px付近）で静止 */
+            100% {
+                transform: translateY(-120px) rotate(0deg) scale(1.3);
+            }
+        }
+
+        /* --- カードを戻すアニメーション --- */
+        .photo-item.returning {
+            z-index: 1000 !important;
+            cursor: default;
+            animation: drop-and-exit-back 1.0s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        @keyframes drop-and-exit-back {
+            0% {
+                transform: translateY(-120px) rotate(0deg) scale(1.3);
+            }
+            /* 1. 上昇：拡大したまま画面の上端より外へ消える */
+            64% {
+                transform: translateY(-120vh) rotate(0deg) scale(1.3);
+            }
+            /* 2. 準備：画面外（上）で元の大きさに戻す */
+            65% {
+                transform: translateY(-120vh) rotate(0deg) scale(1);
+            }
+            /* 3. 落下と着地：手元の隠れた位置に戻る */
+            100% {
+                transform: translateY(calc(1 * var(--deck-hide-h))) rotate(var(--base-rot)) scale(1);
+            }
+        }
+
+        /* --- 下部文章エリア --- */
+        .footer-text-section {
+            height: 120px;
+            background-color: var(--text-main);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 10%;
+            position: relative;
+            z-index: 20;
+        }
+
+        .catchphrase {
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.8;
+            letter-spacing: 0.1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body id="body">
+
+    <div class="overlay" id="overlay"></div>
+
+    <main class="main-container">
+        <div class="brand-section">
+            <h1 class="brand-logo">大潟ショッピングセンター</h1>
+        </div>
+
+        <div class="gallery-section">
+            <div class="card-deck">
+                <div class="photo-item item-1">
+                    <img src="https://picsum.photos/id/225/800/1200" alt="Fashion">
+                </div>
+                <div class="photo-item item-2">
+                    <img src="https://picsum.photos/id/30/800/1200" alt="Lifestyle">
+                </div>
+                <div class="photo-item item-3">
+                    <img src="https://picsum.photos/id/429/800/1200" alt="Food">
+                </div>
+                <div class="photo-item item-4">
+                    <img src="https://picsum.photos/id/678/800/1200" alt="Interior">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-text-section">
+        <p class="catchphrase">
+            地域とともに歩む、心地よい時間。<br>
+            日常の彩りから、特別な日の贈り物まで。あなたの「欲しい」がここにあります。
+        </p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.photo-item');
+            const overlay = document.getElementById('overlay');
+            const body = document.getElementById('body');
+            
+            cards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    e.stopPropagation();
+
+                    if (card.classList.contains('drawn')) {
+                        closeCard(card);
+                    } else {
+                        cards.forEach(c => {
+                            if (c.classList.contains('drawn')) closeCard(c);
+                        });
+                        card.classList.add('drawn');
+                        body.classList.add('has-drawn-card');
+                    }
+                });
+            });
+
+            overlay.addEventListener('click', () => {
+                const drawnCard = document.querySelector('.photo-item.drawn');
+                if (drawnCard) closeCard(drawnCard);
+            });
+
+            function closeCard(card) {
+                card.classList.remove('drawn');
+                card.classList.add('returning');
+                body.classList.remove('has-drawn-card');
+                setTimeout(() => card.classList.remove('returning'), 1000);
+            }
+        });
+    </script>
+</body>
+</html>

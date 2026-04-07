@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大潟ショッピングセンター - Ogata Shopping Center</title>
+    <style>
+        /* --- リセット CSS & 基本設定 --- */
+        :root {
+            --bg-color: #ffffff; /* 清潔感のある白 */
+            --text-main: #333333;
+            --accent-color: #d4af37; /* 上質なゴールド */
+            --font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden; /* 1画面完結 */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- メインコンテンツエリア（上部） --- */
+        .main-container {
+            flex: 1; /* 残りの高さをすべて占める */
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 左側：ロゴ・タイトルエリア (33.33%) */
+        .brand-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .brand-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.15rem;
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+        }
+
+        /* 右側：幾何学フォトギャラリー (66.66%) */
+        .gallery-section {
+            flex: 2;
+            position: relative;
+            background-color: #f9f9f9; /* わずかにグレーにして画像を際立たせる */
+            overflow: hidden;
+        }
+
+        /* 幾何学レイアウトのコンテナ */
+        .geometric-layout {
+            position: absolute;
+            width: 120%; /* 画面外からはみ出させることで動きを出す */
+            height: 120%;
+            top: -10%;
+            left: -10%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotate(-15deg); /* コンテナ全体を少し傾ける */
+        }
+
+/* --- 1. 画像アイテム（枠）の回転アニメーション --- */
+.photo-item {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+    background-color: #ddd;
+    border: 4px solid #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    
+    /* ダイヤ型にクリップ */
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+
+    /* 20秒かけてゆっくり1回転し続ける設定 */
+    animation: rotate-frame 20s linear infinite;
+}
+
+/* --- 2. 中の画像の逆回転（水平を保つため） --- */
+.photo-item img {
+    width: 160%; /* 回転しても端が切れないよう少し大きめに */
+    height: 160%;
+    object-fit: cover;
+    position: absolute;
+    top: -30%;
+    left: -30%;
+
+    /* 枠とは逆方向に回転させることで、画像自体の向きを固定する */
+    animation: rotate-image 20s linear infinite;
+}
+
+/* --- アニメーションの定義 --- */
+/* 枠を右回転 */
+@keyframes rotate-frame {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 画像を左回転（相殺） */
+@keyframes rotate-image {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-360deg); }
+}
+
+/* 各アイテムに少しずつ遅延(delay)を入れると、よりランダムで美しい動きになります */
+.item-1 { top: 15%; left: 30%; animation-delay: 0s; }
+.item-2 { top: 40%; left: 10%; animation-delay: -5s; }
+.item-3 { top: 35%; left: 50%; width: 350px; height: 350px; animation-delay: -10s; }
+.item-4 { top: 65%; left: 35%; animation-delay: -15s; }
+
+        /* ホバー時の演出 */
+        .photo-item:hover {
+            transform: scale(1.05) translate(-10px, -10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            z-index: 10 !important; /* 最前面に */
+        }
+
+        .photo-item:hover img {
+            transform: rotate(15deg) scale(1.1); /* 画像を少しズーム */
+        }
+
+        /* --- 幾何学配置（座標指定） --- */
+        /* 画像1（中央上） */
+        .item-1 {
+            top: 15%;
+            left: 30%;
+            z-index: 1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* 画像2（中央左） */
+        .item-2 {
+            top: 40%;
+            left: 10%;
+            z-index: 2;
+            animation: float 6s ease-in-out infinite 1s; /* デイレイをかける */
+        }
+
+        /* 画像3（中央右・メイン） */
+        .item-3 {
+            top: 35%;
+            left: 50%;
+            width: 350px; /* これだけ少し大きく */
+            height: 350px;
+            z-index: 3;
+            animation: float 6s ease-in-out infinite 2s;
+        }
+
+        /* 画像4（中央下） */
+        .item-4 {
+            top: 65%;
+            left: 35%;
+            z-index: 1;
+            animation: float 6s ease-in-out infinite 1.5s;
+        }
+
+        /* ゆっくりとした浮遊アニメーション */
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(10px, 15px); }
+        }
+
+        /* --- 下部文章エリア --- */
+        .footer-text-section {
+            height: 120px; /* 固定高 */
+            background-color: var(--text-main);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 10%;
+            position: relative;
+            z-index: 20; /* 画像より上に */
+        }
+
+        .catchphrase {
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.8;
+            letter-spacing: 0.1rem;
+            text-align: center;
+            position: relative;
+        }
+
+        /* 装飾用の金色の線 */
+        .catchphrase::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: -20px;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 1px;
+            background-color: var(--accent-color);
+        }
+
+        /* --- レスポンシブ（スマホ対応） --- */
+        @media (max-width: 768px) {
+            .main-container { flex-direction: column; }
+            .brand-section { flex: none; height: 100px; padding: 20px; }
+            .brand-logo { top: 20px; left: 20px; font-size: 1.2rem; }
+            .gallery-section { flex: 1; }
+            .geometric-layout { transform: rotate(0deg) scale(0.7); top: -10%; left: -10%; }
+            .photo-item { width: 200px; height: 200px; }
+            .item-3 { width: 230px; height: 230px; }
+            .footer-text-section { height: auto; padding: 30px; }
+            .catchphrase { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="main-container">
+        <div class="brand-section">
+            <h1 class="brand-logo">大潟ショッピングセンター</h1>
+        </div>
+
+        <div class="gallery-section">
+            <div class="geometric-layout">
+                <div class="photo-item item-1">
+                    <img src="https://picsum.photos/id/225/600/600" alt="Fashion">
+                </div>
+                <div class="photo-item item-2">
+                    <img src="https://picsum.photos/id/30/600/600" alt="Lifestyle">
+                </div>
+                <div class="photo-item item-3">
+                    <img src="https://picsum.photos/id/429/600/600" alt="Food">
+                </div>
+                <div class="photo-item item-4">
+                    <img src="https://picsum.photos/id/678/600/600" alt="Interior">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-text-section">
+        <p class="catchphrase">
+            地域とともに歩む、心地よい時間。<br>
+            日常の彩りから、特別な日の贈り物まで。あなたの「欲しい」がここにあります。
+        </p>
+    </footer>
+
+</body>
+</html>

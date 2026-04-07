@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Mechanical Cat & Gear System</title>
+    <style>
+        :root {
+            --brass: #b59410;
+            --iron: #444;
+            --speed-unit: 10s; /* 全体の基準速度 */
+        }
+
+        body { background: #f0ede5; overflow: hidden; height: 100vh; margin: 0; }
+
+        /* --- 歯車の共通パーツ --- */
+        .gear {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--brass);
+            display: flex; justify-content: center; align-items: center;
+        }
+        /* 歯車のエッジ（歯）を擬似要素で作成 */
+        .gear::before, .gear::after {
+            content: ""; position: absolute; width: 100%; height: 100%;
+            border-radius: 5px; background: var(--brass);
+        }
+        .gear::after { transform: rotate(45deg); }
+        
+        .gear-inner {
+            position: absolute; width: 85%; height: 85%;
+            background: #f0ede5; border-radius: 50%; z-index: 2;
+            overflow: hidden; display: flex; justify-content: center; align-items: center;
+        }
+
+        /* --- 各パーツの配置 --- */
+
+        /* 1. 猫車（左上）: 動力源 */
+        .cat-wheel-box {
+            position: absolute; top: 50px; left: 100px;
+            width: 150px; height: 150px;
+        }
+        .wheel {
+            width: 100%; height: 100%; border: 6px solid var(--iron);
+            border-radius: 50%; animation: rotate-cw var(--speed-unit) linear infinite;
+        }
+
+        /* 2. 小さな伝達歯車（猫車と画像歯車を繋ぐ） */
+        .gear-sub {
+            width: 60px; height: 60px; top: 180px; left: 220px;
+            animation: rotate-ccw calc(var(--speed-unit) * 0.4) linear infinite;
+        }
+
+        /* 3. 画像が入る巨大歯車 */
+        .gear-main {
+            width: 300px; height: 300px; top: 150px; left: 350px;
+            animation: rotate-cw calc(var(--speed-unit) * 2) linear infinite;
+        }
+        .gear-main img {
+            width: 140%; height: 140%; object-fit: cover;
+            animation: rotate-ccw calc(var(--speed-unit) * 2) linear infinite;
+        }
+
+        /* --- 猫のアニメーション --- */
+        .cat {
+            position: absolute; z-index: 10; font-size: 2rem;
+            offset-path: path('M 150 120 A 50 50 0 1 1 150 121 L 450 140 A 150 150 0 1 1 450 141 Z');
+            /* 解説：猫車の中を円形に移動 -> 画像歯車の上へ移動 -> 画像歯車の縁を移動 */
+            animation: cat-mission 20s linear infinite;
+        }
+
+        /* --- 回転・移動の定義 --- */
+        @keyframes rotate-cw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes rotate-ccw { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+
+        @keyframes cat-mission {
+            0% { offset-distance: 0%; }   /* 猫車で走る */
+            40% { offset-distance: 30%; }  /* 歯車へ移動開始 */
+            60% { offset-distance: 60%; }  /* 歯車の上を歩く（直接回す演出） */
+            100% { offset-distance: 100%; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="cat">🐈</div>
+
+    <div class="cat-wheel-box">
+        <div class="wheel"></div>
+    </div>
+
+    <div class="gear gear-sub"></div>
+
+    <div class="gear gear-main">
+        <div class="gear-inner">
+            <img src="https://picsum.photos/id/20/600/600" alt="Main Content">
+        </div>
+    </div>
+
+    <div style="position: absolute; bottom: 50px; width: 100%; text-align: center; font-family: serif;">
+        <h2>大潟ショッピングセンター</h2>
+        <p>猫が紡ぐ、からくり仕掛けの毎日。</p>
+    </div>
+
+</body>
+</html>
