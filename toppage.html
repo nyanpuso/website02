@@ -1,261 +1,467 @@
 <!DOCTYPE html>
+<link rel="icon" href="data:,">
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大潟ショッピングセンター - Ogata Shopping Center</title>
+    <title>大潟ショッピングセンター</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        /* --- リセット CSS & 基本設定 --- */
+        /* --- リセット & 基本設定 --- */
         :root {
-            --bg-color: #ffffff; /* 清潔感のある白 */
+            --bg-color: #ffffff;
             --text-main: #333333;
-            --accent-color: #d4af37; /* 上質なゴールド */
+            --text-light: #666666;
+            --accent-color: #d4af37;
+            --accent-dim: #c9a227;
+            --border-color: #e0e0e0;
             --font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
+            margin: 0;
+            padding: 0;
             font-family: var(--font-family);
             background-color: var(--bg-color);
             color: var(--text-main);
-            height: 100vh;
-            overflow: hidden; /* 1画面完結 */
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* --- メインコンテンツエリア（上部） --- */
-        .main-container {
-            flex: 1; /* 残りの高さをすべて占める */
-            display: flex;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* 左側：ロゴ・タイトルエリア (33.33%) */
-        .brand-section {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-            position: relative;
-        }
-
-        .brand-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 0.15rem;
-            position: absolute;
-            top: 40px;
-            left: 40px;
-            color: var(--text-main);
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 5px;
-        }
-
-        /* 右側：幾何学フォトギャラリー (66.66%) */
-        .gallery-section {
-            flex: 2;
-            position: relative;
-            background-color: #f9f9f9; /* わずかにグレーにして画像を際立たせる */
             overflow: hidden;
         }
 
-        /* 幾何学レイアウトのコンテナ */
-        .geometric-layout {
-            position: absolute;
-            width: 120%; /* 画面外からはみ出させることで動きを出す */
-            height: 120%;
-            top: -10%;
-            left: -10%;
+        /* ナビバー + メインコンテンツはcontainer-mainクラスで管理 */
+        .container-main {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            grid-template-rows: 1fr auto;
+            width: 100vw;
+            height: calc(100vh - 80px);
+            gap: 0;
+        }
+
+        /* --- 左サイド：ページ切り替えボタン --- */
+        .page-nav {
+            grid-column: 1;
+            grid-row: 1 / 3;
+            background-color: #f9f9f9;
+            border-right: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px 15px;
+            gap: 12px;
+            min-width: 80px;
+            overflow-y: auto;
+            max-height: calc(100vh - 100px);
+        }
+
+        .page-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            background-color: #ffffff;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
             display: flex;
             justify-content: center;
             align-items: center;
-            transform: rotate(-15deg); /* コンテナ全体を少し傾ける */
-        }
-
-/* --- 1. 画像アイテム（枠）の回転アニメーション --- */
-.photo-item {
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    overflow: hidden;
-    background-color: #ddd;
-    border: 4px solid #fff;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    
-    /* ダイヤ型にクリップ */
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-
-    /* 20秒かけてゆっくり1回転し続ける設定 */
-    animation: rotate-frame 20s linear infinite;
-}
-
-/* --- 2. 中の画像の逆回転（水平を保つため） --- */
-.photo-item img {
-    width: 160%; /* 回転しても端が切れないよう少し大きめに */
-    height: 160%;
-    object-fit: cover;
-    position: absolute;
-    top: -30%;
-    left: -30%;
-
-    /* 枠とは逆方向に回転させることで、画像自体の向きを固定する */
-    animation: rotate-image 20s linear infinite;
-}
-
-/* --- アニメーションの定義 --- */
-/* 枠を右回転 */
-@keyframes rotate-frame {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* 画像を左回転（相殺） */
-@keyframes rotate-image {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(-360deg); }
-}
-
-/* 各アイテムに少しずつ遅延(delay)を入れると、よりランダムで美しい動きになります */
-.item-1 { top: 15%; left: 30%; animation-delay: 0s; }
-.item-2 { top: 40%; left: 10%; animation-delay: -5s; }
-.item-3 { top: 35%; left: 50%; width: 350px; height: 350px; animation-delay: -10s; }
-.item-4 { top: 65%; left: 35%; animation-delay: -15s; }
-
-        /* ホバー時の演出 */
-        .photo-item:hover {
-            transform: scale(1.05) translate(-10px, -10px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            z-index: 10 !important; /* 最前面に */
-        }
-
-        .photo-item:hover img {
-            transform: rotate(15deg) scale(1.1); /* 画像を少しズーム */
-        }
-
-        /* --- 幾何学配置（座標指定） --- */
-        /* 画像1（中央上） */
-        .item-1 {
-            top: 15%;
-            left: 30%;
-            z-index: 1;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        /* 画像2（中央左） */
-        .item-2 {
-            top: 40%;
-            left: 10%;
-            z-index: 2;
-            animation: float 6s ease-in-out infinite 1s; /* デイレイをかける */
-        }
-
-        /* 画像3（中央右・メイン） */
-        .item-3 {
-            top: 35%;
-            left: 50%;
-            width: 350px; /* これだけ少し大きく */
-            height: 350px;
-            z-index: 3;
-            animation: float 6s ease-in-out infinite 2s;
-        }
-
-        /* 画像4（中央下） */
-        .item-4 {
-            top: 65%;
-            left: 35%;
-            z-index: 1;
-            animation: float 6s ease-in-out infinite 1.5s;
-        }
-
-        /* ゆっくりとした浮遊アニメーション */
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(10px, 15px); }
-        }
-
-        /* --- 下部文章エリア --- */
-        .footer-text-section {
-            height: 120px; /* 固定高 */
-            background-color: var(--text-main);
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0 10%;
-            position: relative;
-            z-index: 20; /* 画像より上に */
-        }
-
-        .catchphrase {
-            font-size: 1.1rem;
-            font-weight: 300;
-            line-height: 1.8;
-            letter-spacing: 0.1rem;
             text-align: center;
+            transition: all 0.3s ease;
+            padding: 5px;
+            line-height: 1.2;
+            color: var(--text-light);
+        }
+
+        .page-button:hover {
+            border-color: var(--accent-color);
+            background-color: #fff9f0;
+        }
+
+        .page-button.active {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-dim));
+            border-color: var(--accent-dim);
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 4px 8px rgba(212, 175, 55, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* --- 中央：スライダーコンテンツ --- */
+        .slider-section {
+            grid-column: 2;
+            grid-row: 1;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
             position: relative;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+        }
+        
+        .slider-section > div {
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
         }
 
-        /* 装飾用の金色の線 */
-        .catchphrase::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: -20px;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 1px;
-            background-color: var(--accent-color);
+        /* ウェルカム表示 */
+        .welcome-block {
+            min-height: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            gap: 30px;
+            padding: 20px;
+            flex-shrink: 0;
         }
 
-        /* --- レスポンシブ（スマホ対応） --- */
+        .welcome-block.hidden {
+            display: none;
+        }
+
+        .welcome-image {
+            flex: 0 0 45%;
+            width: 45%;
+            height: auto;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .welcome-text {
+            flex: 0 0 50%;
+            width: 50%;
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            text-align: left;
+            overflow-y: auto;
+            max-height: 90%;
+        }
+
+        #typewriter-text {
+            display: inline-block;
+            border-right: 3px solid var(--accent-color);
+            padding-right: 10px;
+            animation: cursor-blink 0.7s infinite;
+        }
+
+        @keyframes cursor-blink {
+            0%, 49% { border-right-color: var(--accent-color); }
+            50%, 100% { border-right-color: transparent; }
+        }
+
+        /* スライダーコンテンツ */
+        .slider-content {
+            min-height: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 20px;
+            gap: 30px;
+            flex-shrink: 0;
+        }
+
+        .slider-image {
+            flex: 0 0 45%;
+            width: 45%;
+            height: auto;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .slider-text {
+            text-align: left;
+            flex: 0 0 50%;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+            max-height: 90%;
+        }
+
+        .slider-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            color: var(--text-main);
+        }
+
+        .slider-subtitle {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--accent-color);
+            margin: 0 0 10px 0;
+        }
+
+        .slider-description {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* --- 右サイド：イベント一覧（新しいグリッドレイアウト） --- */
+        .event-sidebar {
+            grid-column: 3;
+            grid-row: 1;
+            background-color: #f9f9f9;
+            border-left: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 15px 10px;
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .event-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 0;
+            margin: 0;
+        }
+
+        .event-item {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            padding: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            border: 1px solid transparent;
+            background-color: transparent;
+            align-items: flex-start;
+        }
+
+        .event-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .event-item.active {
+            background-color: #ffe4b5;
+            border-color: var(--accent-color);
+            box-shadow: 0 2px 4px rgba(212, 175, 55, 0.2);
+        }
+
+        .event-thumbnail {
+            width: 50px;
+            height: 50px;
+            aspect-ratio: 1;
+            border-radius: 4px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .event-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-width: 0;
+        }
+
+        .event-title {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-main);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-height: 1.1;
+            text-align: left;
+        }
+
+        .event-subtitle {
+            font-size: 0.6rem;
+            color: var(--text-light);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            margin-top: 1px;
+            text-align: left;
+        }
+
+        /* --- フッター --- */
+        .footer {
+            grid-column: 2;
+            grid-row: 2;
+            background-color: transparent;
+            border-top: 1px solid var(--border-color);
+            padding: 0;
+            min-height: 60px;
+        }
+
+        /* スクロールバー */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f5f5f5;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #d0d0d0;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b0b0b0;
+        }
+
+        /* レスポンシブ対応 */
         @media (max-width: 768px) {
-            .main-container { flex-direction: column; }
-            .brand-section { flex: none; height: 100px; padding: 20px; }
-            .brand-logo { top: 20px; left: 20px; font-size: 1.2rem; }
-            .gallery-section { flex: 1; }
-            .geometric-layout { transform: rotate(0deg) scale(0.7); top: -10%; left: -10%; }
-            .photo-item { width: 200px; height: 200px; }
-            .item-3 { width: 230px; height: 230px; }
-            .footer-text-section { height: auto; padding: 30px; }
-            .catchphrase { font-size: 0.9rem; }
+            .container-main {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr auto;
+            }
+            .page-nav {
+                display: none;
+            }
+            .event-sidebar {
+                display: none;
+            }
+            .footer {
+                grid-column: 1;
+            }
+            .slider-content,
+            .welcome-block {
+                flex-direction: column;
+                padding: 20px;
+                gap: 15px;
+            }
+            .slider-image {
+                flex: 0 0 auto;
+                width: 100%;
+                max-height: 50%;
+            }
+            .slider-text {
+                flex: 0 0 auto;
+                width: 100%;
+                text-align: center;
+                max-height: 50%;
+                overflow-y: auto;
+            }
+            .welcome-image {
+                flex: 0 0 auto;
+                width: 100%;
+                max-height: 50%;
+            }
+            .welcome-text {
+                flex: 0 0 auto;
+                width: 100%;
+                text-align: center;
+                font-size: 1.8rem;
+                max-height: 50%;
+                overflow-y: auto;
+            }
         }
     </style>
 </head>
 <body>
-
-    <main class="main-container">
-        <div class="brand-section">
-            <h1 class="brand-logo">大潟ショッピングセンター</h1>
+    
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    
+    <!-- ヘッダー（index.htmlから） -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="logo" data-page="home">
+                <span class="logo-symbol">
+                    <img src="assets/images/logo_ohgatasc.png" alt="ロゴ">
+                </span>
+                <svg viewBox="0 0 500 50" class="logo-svg">
+                    <text x="0" y="28">大潟ショッピングセンター</text>
+                </svg>
+            </a>
+            
+            <div class="main-nav">
+                <button class="nav-button" data-page="home">ホーム</button>
+                <button class="nav-button" data-page="shops">店舗</button>
+                <button class="nav-button" data-page="events">イベント</button>
+                <button class="nav-button" data-page="map">地図</button>
+            </div>
+            
+            <label for="menu-toggle" class="menu-button">
+                <span></span><span></span><span></span>
+            </label>
         </div>
 
-        <div class="gallery-section">
-            <div class="geometric-layout">
-                <div class="photo-item item-1">
-                    <img src="https://picsum.photos/id/225/600/600" alt="Fashion">
-                </div>
-                <div class="photo-item item-2">
-                    <img src="https://picsum.photos/id/30/600/600" alt="Lifestyle">
-                </div>
-                <div class="photo-item item-3">
-                    <img src="https://picsum.photos/id/429/600/600" alt="Food">
-                </div>
-                <div class="photo-item item-4">
-                    <img src="https://picsum.photos/id/678/600/600" alt="Interior">
+        <div class="breadcrumb">
+            <nav class="breadcrumb-nav" id="breadcrumb">
+                <a href="#" class="breadcrumb-item" data-page="home">ホーム</a>
+            </nav>
+        </div>
+    </nav>
+
+    <div class="slide-menu">
+        <div class="slide-menu-content">
+            <button class="slide-nav-button" data-page="home">ホーム</button>
+            <button class="slide-nav-button" data-page="shops">店舗</button>
+            <button class="slide-nav-button" data-page="events">イベント</button>
+            <button class="slide-nav-button" data-page="map">地図</button>
+        </div>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <main class="container-main">
+        <!-- 左：ページ切り替えボタン -->
+        <nav class="page-nav">
+            <button class="page-button active" data-page-index="0">全域<br>表示</button>
+            <button class="page-button" data-page-index="1">イベント</button>
+            <button class="page-button" data-page-index="2">カレンダー</button>
+            <button class="page-button" data-page-index="3">地図</button>
+        </nav>
+
+        <!-- 中央：スライダーコンテンツ -->
+        <section class="slider-section">
+            <!-- ウェルカムブロック（初回ロード時のみ表示） -->
+            <div class="welcome-block" id="welcome-block">
+                <img id="welcome-image" class="welcome-image" alt="ようこそ">
+                <div class="welcome-text">
+                    <span id="typewriter-text"></span>
                 </div>
             </div>
-        </div>
+
+            <!-- スライダーコンテンツ -->
+            <div class="slider-content" id="slider-content">
+                <img id="slider-image" class="slider-image" alt="スライド画像">
+                <div class="slider-text">
+                    <h3 class="slider-title" id="slider-title"></h3>
+                    <p class="slider-subtitle" id="slider-subtitle"></p>
+                    <p class="slider-description" id="slider-description"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 右：イベント一覧 -->
+        <aside class="event-sidebar">
+            <ul class="event-list" id="event-list">
+                <!-- 動的に挿入されます -->
+            </ul>
+        </aside>
+
+        <!-- フッター -->
+        <footer class="footer" id="footer">
+            <!-- 空のままでOK -->
+        </footer>
     </main>
 
-    <footer class="footer-text-section">
-        <p class="catchphrase">
-            地域とともに歩む、心地よい時間。<br>
-            日常の彩りから、特別な日の贈り物まで。あなたの「欲しい」がここにあります。
-        </p>
-    </footer>
+    <!-- TypeScriptアプリケーション -->
+    <script type="module" src="./dist/app.js"></script>
 
 </body>
 </html>

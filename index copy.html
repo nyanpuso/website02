@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<link rel="icon" href="data:,">
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大潟ショッピングセンター</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    
+    <nav class="navbar">
+        <div class="navbar-container">
+        <a href="#" class="logo" data-page="home">
+            <span class="logo-symbol">
+                <img src="assets/images/logo_ohgatasc.png" alt="ロゴ">
+            </span>
+
+        <svg viewBox="0 0 500 50" class="logo-svg">
+        <text x="0" y="28">
+            大潟ショッピングセンター
+        </text>
+        </svg>
+    </a>
+        
+        <div class="main-nav">
+            <button class="nav-button" data-page="home">ホーム</button>
+            <button class="nav-button" data-page="shops">店舗</button>
+            <button class="nav-button" data-page="events">イベント</button>
+            <button class="nav-button" data-page="map">地図</button>
+        </div>
+        
+        <label for="menu-toggle" class="menu-button">
+            <span></span><span></span><span></span>
+        </label>
+    </div>
+
+    <div class="breadcrumb">
+        <nav class="breadcrumb-nav" id="breadcrumb">
+            <a href="#" class="breadcrumb-item" data-page="home">ホーム</a>
+        </nav>
+    </div>
+</nav>
+    
+    <div class="slide-menu">
+        <div class="slide-menu-content">
+            <button class="slide-nav-button" data-page="home">ホーム</button>
+            <button class="slide-nav-button" data-page="shops">店舗</button>
+            <button class="slide-nav-button" data-page="events">イベント</button>
+            <button class="slide-nav-button" data-page="map">地図</button>
+        </div>
+    </div>
+    
+    <main class="container-main">
+        <section id="main-content" class="content">
+            <!-- ここは空にする -->
+        </section>
+    </main>
+
+    <script type="module" src="dist/app.js"></script>
+</body>
+</html>

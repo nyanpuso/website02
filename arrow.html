@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>矢印アニメーション</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #f5f5dc 0%, #fffacd 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      width: 1000px;
+      height: 400px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      padding: 50px;
+      overflow: hidden;
+    }
+
+    /* ピン留め紙スタイル */
+    .pinned-note {
+      position: absolute;
+      width: 200px;
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .pinned-note:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ピン */
+    .pinned-note::before {
+      content: '';
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at 30% 30%, #ff6b6b, #cc0000);
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ピンの茎 */
+    .pinned-note::after {
+      content: '';
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 8px;
+      background: #333;
+    }
+
+    /* 開始ピン留め紙 */
+    .start-note {
+      left: 30px;
+      top: 100px;
+    }
+
+    .start-note h2 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .start-note p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .start-note button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .start-note button:hover {
+      transform: scale(1.05);
+    }
+
+    .start-note button:active {
+      transform: scale(0.95);
+    }
+
+    /* 終了ピン留め紙 */
+    .end-note {
+      right: 30px;
+      top: 100px;
+      opacity: 0;
+      transform: scale(0.5);
+    }
+
+    .end-note.visible {
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes popIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .end-note h2 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .end-note p {
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* 矢印コンテナ */
+    .arrow-container {
+      position: absolute;
+      top: 180px;
+      left: 240px;
+      height: 50px;
+      width: 500px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* SVGコンテナ */
+    .svg-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* SVG矢印 - ストローク描画効果 */
+    svg.arrow {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      stroke-width: 5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    /* 矢印の本体 */
+    .arrow-body {
+      stroke: #1a1a1a;
+      stroke-dasharray: 400;
+      stroke-dashoffset: 400;
+    }
+
+    .arrow-step-1.animate {
+      animation: drawBody 1.5s cubic-bezier(0.25, 0.1, 0.5, 1) forwards;
+    }
+
+    @keyframes drawBody {
+      0% {
+        stroke-dashoffset: 400;
+        opacity: 0;
+      }
+      5% {
+        opacity: 1;
+      }
+      25% {
+        stroke-dashoffset: 300;
+      }
+      50% {
+        stroke-dashoffset: 150;
+      }
+      75% {
+        stroke-dashoffset: 30;
+      }
+      100% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+      }
+    }
+
+    /* 矢印の先端（一筆書きで段階的に描かれる） */
+    .arrow-head-path {
+      stroke: #1a1a1a;
+      stroke-dasharray: 50;
+      stroke-dashoffset: 50;
+      opacity: 0;
+    }
+
+    /* ステップ2: 上の斜め線 */
+    .arrow-step-2.animate {
+      animation: drawStep 0.5s cubic-bezier(0.2, 0.5, 0.5, 1) 1.5s forwards;
+    }
+
+    /* ステップ3: 垂直線（水平線を超える） */
+    .arrow-step-3.animate {
+      animation: drawStep 0.6s cubic-bezier(0.2, 0.5, 0.5, 1) 2s forwards;
+    }
+
+    /* ステップ4: 右上の斜め線 */
+    .arrow-step-4.animate {
+      animation: drawStep 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) 2.6s forwards;
+    }
+
+    @keyframes drawStep {
+      0% {
+        stroke-dashoffset: 50;
+        opacity: 0;
+      }
+      15% {
+        opacity: 1;
+      }
+      100% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+      }
+    }
+
+    /* グローエフェクト */
+    .glow-effect {
+      display: none;
+    }
+
+    /* リセットボタン */
+    .reset-button {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s ease;
+    }
+
+    .reset-button:hover {
+      background: #ff5252;
+    }
+
+    /* テキスト */
+    .instruction {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #666;
+      font-size: 16px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="instruction">左の紙をクリックするとマジックで矢印を描きます</div>
+
+    <!-- 開始ピン留め紙 -->
+    <div class="pinned-note start-note" id="startNote">
+      <h2>スタート</h2>
+      <p>ここをクリック</p>
+      <button onclick="startAnimation()">矢印を描く</button>
+    </div>
+
+    <!-- 矢印コンテナ -->
+    <div class="arrow-container" id="arrowContainer">
+      <div class="svg-wrapper">
+        <svg class="arrow" id="arrowSvg" viewBox="0 0 500 50" preserveAspectRatio="none">
+          <!-- 矢印の本体と先端を一筆書きで描く -->
+          <!-- 1. 水平線 -->
+          <line class="arrow-body arrow-step-1" x1="0" y1="25" x2="370" y2="25" />
+          
+          <!-- 2. 上の角への斜め線（-120度で左上へ） -->
+          <path class="arrow-head-path arrow-step-2" d="M 370 25 L 340 5" />
+          
+          <!-- 3. 垂直に下へ落ちる線（水平線を越える） -->
+          <path class="arrow-head-path arrow-step-3" d="M 340 5 L 340 45" />
+          
+          <!-- 4. 右上に戻る線（-120度で水平線の終点に） -->
+          <path class="arrow-head-path arrow-step-4" d="M 340 45 L 370 25" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- 終了ピン留め紙 -->
+    <div class="pinned-note end-note" id="endNote">
+      <h2>ゴール</h2>
+      <p>矢印がたどり着きました！</p>
+    </div>
+
+    <!-- リセットボタン -->
+    <button class="reset-button" onclick="resetAnimation()">リセット</button>
+  </div>
+
+  <script>
+    let isAnimating = false;
+
+    function startAnimation() {
+      if (isAnimating) return;
+      isAnimating = true;
+
+      const arrowStep1 = document.querySelector('.arrow-step-1');
+      const arrowStep2 = document.querySelector('.arrow-step-2');
+      const arrowStep3 = document.querySelector('.arrow-step-3');
+      const arrowStep4 = document.querySelector('.arrow-step-4');
+      const endNote = document.getElementById('endNote');
+
+      // すべてのステップにアニメーションクラスを追加
+      arrowStep1.classList.add('animate');
+      arrowStep2.classList.add('animate');
+      arrowStep3.classList.add('animate');
+      arrowStep4.classList.add('animate');
+
+      // 3.1秒後に終了ノートを表示
+      setTimeout(() => {
+        endNote.classList.add('visible');
+        isAnimating = false;
+      }, 3100);
+    }
+
+    function resetAnimation() {
+      const arrowStep1 = document.querySelector('.arrow-step-1');
+      const arrowStep2 = document.querySelector('.arrow-step-2');
+      const arrowStep3 = document.querySelector('.arrow-step-3');
+      const arrowStep4 = document.querySelector('.arrow-step-4');
+      const endNote = document.getElementById('endNote');
+
+      // アニメーションクラスを削除
+      arrowStep1.classList.remove('animate');
+      arrowStep2.classList.remove('animate');
+      arrowStep3.classList.remove('animate');
+      arrowStep4.classList.remove('animate');
+      endNote.classList.remove('visible');
+
+      isAnimating = false;
+    }
+
+    // クリックしてもボタンでも動作するように
+    document.getElementById('startNote').addEventListener('click', startAnimation);
+  </script>
+</body>
+</html>

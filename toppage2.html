@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大潟ショッピングセンター - ボード</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* メインボード */
+        .board {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(45deg, #faf3e0 0%, #f5ede0 50%, #f0e5d8 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.1);
+        }
+
+        /* ページコンテナ */
+        .page-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transform: scale(1);
+            transition: all 0.6s ease;
+        }
+
+        .page-container.hidden {
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+        }
+
+        /* ====== PAGE 1: TOP ====== */
+        .page-1 {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .page-1-sections {
+            position: relative;
+            width: 95%;
+            height: 95%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* 上部セクション */
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            height: 15%;
+            flex-shrink: 0;
+        }
+
+        /* 中部セクション */
+        .middle-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+            padding: 20px;
+            height: 55%;
+            flex: 1;
+            position: relative;
+        }
+
+        /* 下部セクション */
+        .bottom-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px;
+            height: 30%;
+            flex-shrink: 0;
+            position: relative;
+        }
+        }
+
+        .center-focal-image::before,
+        .center-focal-image::after {
+            content: '→';
+            position: absolute;
+            font-size: 48px;
+            color: #ff6b6b;
+            font-weight: bold;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .center-focal-image::before {
+            left: -80px;
+        }
+
+        .center-focal-image::after {
+            right: -80px;
+        }
+
+        .center-image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #4caf50 0%, #66bb6a 50%, #81c784 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* イベント情報 */
+        .events-area {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        /* ピン留め要素の基本スタイル */
+        .pinned-item {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .pinned-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+        }
+
+        /* ピン */
+        .pin-icon {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle at 30% 30%, #ff6b6b, #cc0000);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset -1px -1px 2px rgba(255,255,255,0.5);
+        }
+
+        .pin-icon::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 8px;
+            background: #999;
+        }
+
+        /* ロゴ & タイトル */
+        .logo-title {
+            width: 280px;
+            height: 110px;
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            flex-shrink: 0;
+        }
+
+        .logo-title-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 8px;
+        }
+
+        .logo-img {
+            width: 45px;
+            height: 45px;
+            background: radial-gradient(circle, #ff6b6b, #cc0000);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .logo-text {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* 事務所 - 連絡先 */
+        .office-contact {
+            width: 260px;
+            height: 130px;
+            background: linear-gradient(135deg, #fff0f0 0%, #ffebeb 100%);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .office-contact-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 6px;
+        }
+
+        .office-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .office-phone {
+            font-size: 18px;
+            font-weight: bold;
+            color: #cc0000;
+            letter-spacing: 1px;
+        }
+
+        .event-card {
+            width: 140px;
+            height: 100%;
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .event-card .pin-icon {
+            top: -12px;
+        }
+
+        .event-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .event-icon {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .event-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+
+        /* 矢印 */
+        svg.arrow {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .arrow-line {
+            stroke: #ff6b6b;
+            stroke-width: 3;
+            fill: none;
+            stroke-dasharray: 10, 5;
+            animation: dashMove 0.5s linear infinite;
+        }
+
+        @keyframes dashMove {
+            to { stroke-dashoffset: -15; }
+        }
+
+        .arrow-head {
+            fill: #ff6b6b;
+        }
+
+        /* ====== PAGE 2: STORES ====== */
+        .page-2 {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stores-container {
+            position: relative;
+            width: 90%;
+            height: 90%;
+            background: rgba(255,255,255,0.3);
+            border-radius: 12px;
+            padding: 40px;
+            overflow: hidden;
+        }
+
+        .stores-title {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 80px;
+            animation: fanSpread 0.8s ease-out forwards;
+        }
+
+        @keyframes fanSpread {
+            from {
+                opacity: 0;
+                transform: scale(0.5) rotateY(-90deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotateY(0deg);
+            }
+        }
+
+        .store-loofa {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .store-loofa::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at 30% 30%, #ff9800, #f57c00);
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .store-loofa:hover {
+            transform: translateY(-10px) rotate(2deg);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+        }
+
+        .store-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .store-category {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .store-description {
+            font-size: 11px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* ====== PAGE 3: EVENTS ====== */
+        .page-3 {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .board-flyer {
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%);
+            border: 8px solid #8d6e63;
+            border-radius: 4px;
+            padding: 40px;
+            position: relative;
+            overflow-y: auto;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.1);
+        }
+
+        .board-flyer::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 30% 30%, #ff5252, #d32f2f);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        .board-flyer::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 30% 30%, #ff5252, #d32f2f);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        .board-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .flyers-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 30px;
+        }
+
+        .flyer {
+            background: white;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 2px 4px 12px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            transform: rotate(-2deg);
+        }
+
+        .flyer:nth-child(2n) {
+            transform: rotate(2deg);
+        }
+
+        .flyer:hover {
+            transform: rotate(0deg) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        }
+
+        .flyer::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle at 30% 30%, #ffd600, #fbc02d);
+            border-radius: 50%;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+
+        .flyer-image {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, #bbdefb 0%, #90caf9 100%);
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .flyer-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .flyer-date {
+            font-size: 11px;
+            color: #888;
+        }
+
+        /* ====== モーダル/ポップアップ ====== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            color: #666;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            padding-right: 30px;
+        }
+
+        .modal-body {
+            color: #666;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .modal-body p {
+            margin-bottom: 10px;
+        }
+
+        /* ナビゲーション */
+        .nav-buttons {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 50;
+        }
+
+        .nav-btn {
+            background: white;
+            border: 2px solid #333;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn:hover {
+            background: #333;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="board">
+        <!-- PAGE 1: TOP -->
+        <div class="page-container page-1" id="page-1">
+            <div class="page-1-sections">
+                <!-- 上部セクション -->
+                <div class="top-section">
+                    <!-- ロゴ & タイトル -->
+                    <div class="pinned-item logo-title">
+                        <div class="pin-icon"></div>
+                        <div class="logo-title-content">
+                            <div class="logo-img">SC</div>
+                            <div class="logo-text">大潟<br>ショッピング<br>センター</div>
+                        </div>
+                    </div>
+
+                    <!-- 事務所・連絡先 -->
+                    <div class="pinned-item office-contact" id="office-contact">
+                        <div class="pin-icon"></div>
+                        <div class="office-contact-content">
+                            <div class="office-label">事務所</div>
+                            <div class="office-phone">025-534-5513</div>
+                            <div style="font-size: 10px; color: #999; margin-top: 5px;">電話受付: 9:00-18:00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 中部セクション：店舗←前景写真→地図 -->
+                <div class="middle-section">
+                    <!-- 店舗ボタン -->
+                    <div class="pinned-item nav-item" id="stores-button">
+                        <div class="pin-icon"></div>
+                        <div class="nav-circle">店舗</div>
+                    </div>
+
+                    <!-- 中央の前景写真 -->
+                    <div class="pinned-item center-focal-image">
+                        <div class="pin-icon"></div>
+                        <div class="center-image-placeholder">
+                            🏢 ショッピング<br>センター
+                        </div>
+                    </div>
+
+                    <!-- 地図ボタン -->
+                    <div class="pinned-item nav-item" id="map-button">
+                        <div class="pin-icon"></div>
+                        <div class="nav-circle">地図</div>
+                    </div>
+                </div>
+
+                <!-- 下部セクション：イベント情報 -->
+                <div class="bottom-section">
+                    <!-- イベント情報 -->
+                    <div class="events-area">
+                        <div class="event-card" data-event="1">
+                            <div class="pin-icon"></div>
+                            <div class="event-icon">🎉</div>
+                            <div class="event-title">春のセール</div>
+                        </div>
+                        <div class="event-card" data-event="2">
+                            <div class="pin-icon"></div>
+                            <div class="event-icon">🎪</div>
+                            <div class="event-title">フェスティバル</div>
+                        </div>
+                        <div class="event-card" data-event="3">
+                            <div class="pin-icon"></div>
+                            <div class="event-icon">🎁</div>
+                            <div class="event-title">福袋企画</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SVG矢印 -->
+            <svg id="arrows-page1" class="arrow" style="width: 100%; height: 100%; top: 0; left: 0;">
+            </svg>
+        </div>
+
+        <!-- PAGE 2: STORES -->
+        <div class="page-container page-2 hidden" id="page-2">
+            <div class="stores-container">
+                <div class="stores-title">店舗一覧</div>
+                <div class="stores-grid" id="stores-grid">
+                    <!-- 動的に実装 -->
+                </div>
+            </div>
+            <svg id="arrows-page2" class="arrow" style="width: 100%; height: 100%; top: 0; left: 0;">
+            </svg>
+        </div>
+
+        <!-- PAGE 3: EVENTS -->
+        <div class="page-container page-3 hidden" id="page-3">
+            <div class="board-flyer">
+                <div class="board-title">イベント情報</div>
+                <div class="flyers-container" id="flyers-container">
+                    <!-- 動的に実装 -->
+                </div>
+            </div>
+            <svg id="arrows-page3" class="arrow" style="width: 100%; height: 100%; top: 0; left: 0;">
+            </svg>
+        </div>
+    </div>
+
+    <!-- 連絡先カード モーダル -->
+    <div class="modal" id="contact-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeContactModal()">✕</button>
+            <div class="modal-title">📞 連絡先情報</div>
+            <div class="modal-body">
+                <p><strong>大潟ショッピングセンター 事務所</strong></p>
+                <p>📞 電話：025-534-5513</p>
+                <p>⏰ 営業時間：9:00 - 18:00</p>
+                <p>📍 所在地：新潟県大潟市</p>
+                <p>ご不明な点やご質問は、上記電話番号までお気軽にお問い合わせください。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 店舗詳細 モーダル -->
+    <div class="modal" id="store-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeStoreModal()">✕</button>
+            <div id="store-modal-content"></div>
+        </div>
+    </div>
+
+    <!-- イベント詳細 モーダル -->
+    <div class="modal" id="event-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeEventModal()">✕</button>
+            <div id="event-modal-content"></div>
+        </div>
+    </div>
+
+    <!-- ナビゲーション -->
+    <div class="nav-buttons">
+        <button class="nav-btn" id="back-btn" onclick="previousPage()">← 戻る</button>
+        <button class="nav-btn" id="forward-btn" onclick="nextPage()">進む →</button>
+    </div>
+
+    <script type="module" src="./dist/toppage2.js"></script>
+</body>
+</html>

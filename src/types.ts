@@ -19,9 +19,11 @@ export interface Shop {
 export interface Slide {
     image: string;
     title: string;
+    subtitle?: string;
     description?: string;
     priority: number;
     fullImage?: boolean;
+    id?: string;
 }
 
 export interface AppState {
